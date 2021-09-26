@@ -33,6 +33,41 @@
   (let* ((url (cdr (assoc club (cdr (assoc league soccer--leagues))))))
     url))
 
+(defun soccer--get-league-data-alist (league club data-type)
+  "Get data for a CLUB of a LEAGUE."
+  (let* ((url (concat (soccer--get-league-url league club) (format "/%s/" data-type))))
+    (with-current-buffer (url-retrieve-synchronously url)
+      (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
+	     (dates-dom (dom-by-class dom "kick_t_dt"))
+	     (times-dom (dom-by-class dom "kick_t_ko"))
+	     (homes-dom (dom-by-class dom "home_o"))
+	     (awayes-dom (dom-by-class dom "away_o"))
+	     results-dom
+	     (file-name (format "/tmp/soccer_%s_%s.org" club data-type))
+	     (number-of-results (length dates-dom))
+	     dates
+	     times
+	     homes
+	     awayes
+	     results)
+	(when (string-equal data-type "results")
+	  (setq results-dom (dom-by-class dom "score cshas_ended"))
+	  (setq results (cl-loop for n from 0 to number-of-results
+			       collect (dom-texts (nth n results-dom)))))
+	(setq dates (cl-loop for n from 0 to number-of-results
+			     collect (dom-texts (nth n dates-dom))))
+	(setq times (cl-loop for n from 0 to number-of-results
+			     collect (dom-texts (nth n times-dom))))
+	(setq homes (cl-loop for n from 0 to number-of-results
+			     collect (dom-texts (nth n homes-dom))))
+	(setq awayes (cl-loop for n from 0 to number-of-results
+			      collect (dom-texts (nth n awayes-dom))))
+	`(("date" . ,dates)
+	  ("time" . ,times)
+	  ("home" . ,homes)
+	  ("away" . ,awayes)
+	  ("result" . ,results))))))
+
 (defun soccer--get-league-data (league club data-type num-of-results)
   "Get NUM-OF-RESULT number of DATA-TYPE for a CLUB of a LEAGUE."
   (let* ((league-data (soccer--get-league-data-alist league club data-type))
@@ -93,41 +128,6 @@
       (org-table-align)
       (write-region (point-min) (point-max) file-name)
       (find-file file-name))))
-
-(defun soccer--get-league-data-alist (league club data-type)
-  "Get data for a CLUB of a LEAGUE."
-  (let* ((url (concat (soccer--get-league-url league club) (format "/%s/" data-type))))
-    (with-current-buffer (url-retrieve-synchronously url)
-      (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
-	     (dates-dom (dom-by-class dom "kick_t_dt"))
-	     (times-dom (dom-by-class dom "kick_t_ko"))
-	     (homes-dom (dom-by-class dom "home_o"))
-	     (awayes-dom (dom-by-class dom "away_o"))
-	     results-dom
-	     (file-name (format "/tmp/soccer_%s_%s.org" club data-type))
-	     (number-of-results (length dates-dom))
-	     dates
-	     times
-	     homes
-	     awayes
-	     results)
-	(when (string-equal data-type "results")
-	  (setq results-dom (dom-by-class dom "score cshas_ended"))
-	  (setq results (cl-loop for n from 0 to number-of-results
-			       collect (dom-texts (nth n results-dom)))))
-	(setq dates (cl-loop for n from 0 to number-of-results
-			     collect (dom-texts (nth n dates-dom))))
-	(setq times (cl-loop for n from 0 to number-of-results
-			     collect (dom-texts (nth n times-dom))))
-	(setq homes (cl-loop for n from 0 to number-of-results
-			     collect (dom-texts (nth n homes-dom))))
-	(setq awayes (cl-loop for n from 0 to number-of-results
-			      collect (dom-texts (nth n awayes-dom))))
-	`(("date" . ,dates)
-	  ("time" . ,times)
-	  ("home" . ,homes)
-	  ("away" . ,awayes)
-	  ("result" . ,results))))))
 
 (defun soccer--fixtures-full-in-org (league club)
   "Fixtures of CLUB of LEAGUE."
