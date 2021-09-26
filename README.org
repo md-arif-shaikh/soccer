@@ -1,0 +1,21 @@
+#+TITLE: Soccer
+#+AUTHOR: Md Arif Shaikh
+#+EMAIL: arifshaikh.astro@gmail.com
+
+* About the package
+  ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results etc for soccer (football) matches inside emacs. Currently it works for only Premier League (England) but could be easily extended to add other leagues around the world. All data are fetched from [[https://www.scorespro.com/][scorespro]] website.
+* Installation
+  Currently it's not available in any package repository but one can easily install it using ~straight~ and ~use-package~
+  #+BEGIN_SRC emacs-lisp
+    (use-package soccer
+      :straight (soccer :type git :host github :repo "md-arif-shaikh/soccer"))
+  #+END_SRC
+* Commons functions
+
+  | Functions                    | Actions                          |
+  | ~soccer--fixtures-next~        | Fixture for the Next match       |
+  | ~soccer--fixtures-next-5~      | Fixtures of the Next 5 matches   |
+  | ~soccer--fixtures-full-in-org~ | Full fixtures saved in org file  |
+  | ~soccer--results-last~         | Result of the last match         |
+  | ~soccer--results-last-5~       | Results of the last 5 matches    |
+  | ~soccer--results-full-in-org~  | Full list of results in org file |
