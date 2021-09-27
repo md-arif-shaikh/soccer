@@ -26,6 +26,32 @@
 (require 'soccer-leagues)
 (require 'org)
 (require 'dom)
+
+(defface soccer-face--win
+  '((t :foreground "green"
+       :weight extra-bold
+       :box nil
+       :underline nil))
+  "Face for win."
+  :group 'soccer-face)
+
+(defface soccer-face--loss
+  '((t :foreground "red"
+       :weight extra-bold
+       :box nil
+       :underline nil))
+  "Face for loss."
+  :group 'soccer-face)
+
+(defface soccer-face--draw
+  '((t :foreground "cyan"
+       :weight extra-bold
+       :box nil
+       :underline nil))
+  "Face for draw."
+  :group 'soccer-face)
+
+(defvar soccer--league-names)
 (setq soccer--league-names (mapcar 'car soccer--leagues))
 
 (defun soccer--get-league-url (league club)
@@ -68,30 +94,6 @@
 	  ("away" . ,awayes)
 	  ("result" . ,results))))))
 
-(defface soccer-face--win
-  '((t :foreground "green"
-       :weight extra-bold
-       :box nil
-       :underline nil))
-  "Face for win."
-  :group 'soccer-face)
-
-(defface soccer-face--loss
-  '((t :foreground "red"
-       :weight extra-bold
-       :box nil
-       :underline nil))
-  "Face for loss."
-  :group 'soccer-face)
-
-(defface soccer-face--draw
-  '((t :foreground "cyan"
-       :weight extra-bold
-       :box nil
-       :underline nil))
-  "Face for draw."
-  :group 'soccer-face)
-
 (defun soccer--get-league-data (league club data-type num-of-results)
   "Get NUM-OF-RESULT number of DATA-TYPE for a CLUB of a LEAGUE."
   (let* ((league-data (soccer--get-league-data-alist league club data-type))
@@ -114,9 +116,7 @@
 					  (away (nth n awayes))
 					  result
 					  home-goals
-					  away-goals
-					  home-face
-					  away-face)
+					  away-goals)
 				     (when (string-equal data-type "results")
 				       (setq result (split-string (nth n results)))
 				       (setq home-goals (car result))
