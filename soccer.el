@@ -26,6 +26,17 @@
 (require 'soccer-leagues)
 (require 'org)
 (require 'dom)
+(require 'convert-time)
+
+(defcustom soccer--local-time-zone-abrv "IST"
+  "Abbreviation for local time zone."
+  :type 'string
+  :group 'soccer)
+
+(defcustom soccer--source-time-zone-abrv "CEST"
+  "Abbreviation for source time zone."
+  :type 'string
+  :group 'soccer)
 
 (defface soccer-face--win
   '((t :foreground "green"
@@ -112,6 +123,7 @@
     (setq msg-str (cl-loop for n from 0 to (1- num-of-results)
 			   collect (let* ((date (nth n dates))
 					  (time (nth n times))
+					  (local-time (convert-time--convert-time time soccer--source-time-zone-abrv soccer--local-time-zone-abrv))
 					  (home (nth n homes))
 					  (away (nth n awayes))
 					  result
@@ -122,14 +134,14 @@
 				       (setq home-goals (car result))
 				       (setq away-goals (nth 0 (last result))))
 				     (if (string-equal data-type "results")
-					 (format "%s %s:  %s" date time 
+					 (format "%s %s %s" date local-time 
 						 (cond ((> (string-to-number home-goals) (string-to-number away-goals))
 							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--win) (propertize (concat away-goals " " away) 'face 'soccer-face--loss)))
 						       ((< (string-to-number home-goals) (string-to-number away-goals))
 							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--loss) (propertize (concat away-goals " " away) 'face 'soccer-face--win)))
 						       ((= (string-to-number home-goals) (string-to-number away-goals))
 							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--draw) (propertize (concat away-goals " " away) 'face 'soccer-face--draw)))))
-				       (format "%s %s: %s - %s" date time home away)))))
+				       (format "%s %s %s - %s" date local-time home away)))))
     (message "%s" (string-join msg-str "\n"))))
 
 (defun soccer--get-league-data-in-org (league club data-type num-of-results)
