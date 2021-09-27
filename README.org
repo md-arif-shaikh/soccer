@@ -10,7 +10,7 @@
     (use-package soccer
       :straight (soccer :type git :host github :repo "md-arif-shaikh/soccer"))
   #+END_SRC
-  It also need [[]] for converting source time to local time and can be added similarly
+  It also need [[https://github.com/md-arif-shaikh/emacs-convert-time][emacs-convert-time]] for converting source time to local time and can be added similarly
   #+BEGIN_SRC emacs-lisp
     (use-package convert-time
 	:straight (convert-time :type git :host github :repo "md-arif-shaikh/emacs-convert-time"))
