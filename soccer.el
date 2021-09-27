@@ -68,6 +68,30 @@
 	  ("away" . ,awayes)
 	  ("result" . ,results))))))
 
+(defface soccer-face--win
+  '((t :foreground "green"
+       :weight extra-bold
+       :box nil
+       :underline nil))
+  "Face for win."
+  :group 'soccer-face)
+
+(defface soccer-face--loss
+  '((t :foreground "red"
+       :weight extra-bold
+       :box nil
+       :underline nil))
+  "Face for loss."
+  :group 'soccer-face)
+
+(defface soccer-face--draw
+  '((t :foreground "cyan"
+       :weight extra-bold
+       :box nil
+       :underline nil))
+  "Face for draw."
+  :group 'soccer-face)
+
 (defun soccer--get-league-data (league club data-type num-of-results)
   "Get NUM-OF-RESULT number of DATA-TYPE for a CLUB of a LEAGUE."
   (let* ((league-data (soccer--get-league-data-alist league club data-type))
@@ -88,10 +112,24 @@
 					  (time (nth n times))
 					  (home (nth n homes))
 					  (away (nth n awayes))
-					  result)
+					  result
+					  home-goals
+					  away-goals
+					  home-face
+					  away-face)
 				     (when (string-equal data-type "results")
-				       (setq result (nth n results)))
-				     (format "%s %s:  %s vs %s %s" date time home away (if (string-equal data-type "results") (format "%s" result) "")))))
+				       (setq result (split-string (nth n results)))
+				       (setq home-goals (car result))
+				       (setq away-goals (nth 0 (last result))))
+				     (if (string-equal data-type "results")
+					 (format "%s %s:  %s" date time 
+						 (cond ((> (string-to-number home-goals) (string-to-number away-goals))
+							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--win) (propertize (concat away-goals " " away) 'face 'soccer-face--loss)))
+						       ((< (string-to-number home-goals) (string-to-number away-goals))
+							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--loss) (propertize (concat away-goals " " away) 'face 'soccer-face--win)))
+						       ((= (string-to-number home-goals) (string-to-number away-goals))
+							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--draw) (propertize (concat away-goals " " away) 'face 'soccer-face--draw)))))
+				       (format "%s %s: %s - %s" date time home away)))))
     (message "%s" (string-join msg-str "\n"))))
 
 (defun soccer--get-league-data-in-org (league club data-type num-of-results)
