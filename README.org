@@ -10,7 +10,18 @@
     (use-package soccer
       :straight (soccer :type git :host github :repo "md-arif-shaikh/soccer"))
   #+END_SRC
-* Commons functions
+  It also need [[]] for converting source time to local time and can be added similarly
+  #+BEGIN_SRC emacs-lisp
+    (use-package convert-time
+	:straight (convert-time :type git :host github :repo "md-arif-shaikh/emacs-convert-time"))
+  #+END_SRC
+  Set the source and local time zones using the abbreviations with the following examples
+  #+BEGIN_SRC emacs-lisp
+    (setq soccer--source-time-zone-abrv "CEST")
+    (setq soccer--local-time-zone-abrv "IST")
+  #+END_SRC
+* Common interactive functions
+  Call these using ~M-x Function~ where ~Function~ is any of the following functions
 
   | Functions                    | Actions                          |
   | ~soccer--fixtures-next~        | Fixture for the Next match       |
