@@ -3,7 +3,7 @@
 ;; Copyright (C) 2021  Md Arif Shaikh
 
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
-;; Keywords: 
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -67,5 +67,7 @@
 					     ("Sevilla" . "https://www.scorespro.com/soccer/spain/teams/sevilla-MjYyNTM=/")
 					     ("Valencia" . "https://www.scorespro.com/soccer/spain/teams/valencia-MTgwMzc=/")
 					     ("Villarreal" . "https://www.scorespro.com/soccer/spain/teams/villarreal-MTc4NDI=/")))))
+
 (provide 'soccer-leagues)
-;;; soccer-leauges.el ends here
+
+;;; soccer-leagues.el ends here

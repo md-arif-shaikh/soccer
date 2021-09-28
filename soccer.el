@@ -3,7 +3,9 @@
 ;; Copyright (C) 2021  Md Arif Shaikh
 
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
-;; Keywords: 
+;; Homepage: https://github.com/md-arif-shaikh/soccer
+;; Package-Requires: ((emacs "25.1"))
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -19,8 +21,8 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;; 
+;;
+;; This package brings soccer (football) fixtures, results in your Emacs.
 
 ;;; Code:
 (require 'soccer-leagues)
@@ -145,8 +147,7 @@
 					  (match-year-local (convert-time--get-year-from-date local-date "\\." 2))
 					  result
 					  home-goals
-					  away-goals
-					  )
+					  away-goals)
 				     (if (< match-year-local 2000)
 					 (setq match-year-local (+ 2000 match-year-local)))
 				     (when (string-equal data-type "results")
@@ -154,7 +155,7 @@
 				       (setq home-goals (car result))
 				       (setq away-goals (nth 0 (last result))))
 				     (if (string-equal data-type "results")
-					 (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P  
+					 (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P
 						 (cond ((> (string-to-number home-goals) (string-to-number away-goals))
 							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--win) (propertize (concat away-goals " " away) 'face 'soccer-face--loss)))
 						       ((< (string-to-number home-goals) (string-to-number away-goals))
