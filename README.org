@@ -3,7 +3,10 @@
 #+EMAIL: arifshaikh.astro@gmail.com
 
 * About the package
-  ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results etc for soccer (football) matches inside emacs. Currently it works for only Premier League (England) and La Liga (Spain) but could be easily extended to add other leagues around the world. Rank table is not supported yet but will be in the future. All data are fetched from [[https://www.scorespro.com/][scorespro]] website.
+  ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results etc for soccer (football) matches inside emacs. Currently it works for
+  - Premier League (England)
+  - La Liga (Spain)
+  But could be easily extended to add other leagues around the world. Rank table is not supported yet but will be in the future. All data are fetched from ~scorespro~ website.
 * Installation
   Currently it's not available in any package repository but one can easily install it using ~straight~ and ~use-package~
   #+BEGIN_SRC emacs-lisp
@@ -30,3 +33,8 @@
   | ~soccer--results-last~         | Result of the last match         |
   | ~soccer--results-last-5~       | Results of the last 5 matches    |
   | ~soccer--results-full-in-org~  | Full list of results in org file |
+* Screenshots
+  - ~soccer--fixtures-next-5~
+    #+html: <p align="center"><img src="screenshots/soccer--fixtures-next-5.png"/></p>
+  - ~soccer--results-last-5~
+    #+html: <p align="center"><img src="screenshots/soccer--results-last-5.png"/></p>
