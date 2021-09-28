@@ -105,6 +105,12 @@
 	  ("away" . ,awayes)
 	  ("result" . ,results))))))
 
+(defun soccer--prepend-zero (num)
+  "Prepend zero to NUM."
+  (if (< num 10)
+      (concat "0" (format "%s" num))
+    num))
+
 (defun soccer--get-league-data (league club data-type num-of-results)
   "Get NUM-OF-RESULT number of DATA-TYPE for a CLUB of a LEAGUE."
   (let* ((league-data (soccer--get-league-data-alist league club data-type))
@@ -123,25 +129,39 @@
     (setq msg-str (cl-loop for n from 0 to (1- num-of-results)
 			   collect (let* ((date (nth n dates))
 					  (time (nth n times))
-					  (local-time (convert-time--convert-time time soccer--source-time-zone-abrv soccer--local-time-zone-abrv))
+					  (local-time-list (convert-time--get-converted-time time soccer--source-time-zone-abrv soccer--local-time-zone-abrv))
+					  (local-min (nth 0 local-time-list))
+					  (local-hour (nth 1 local-time-list))
+					  (local-A/P (nth 2 local-time-list))
+					  (local-day (nth 3 local-time-list))
 					  (home (nth n homes))
 					  (away (nth n awayes))
+					  (local-date (cond ((string-equal local-day "+0d") date)
+							    ((string-equal local-day "+1d") (convert-time--get-next-or-previous-date date "\\." 0 1 2 "++1"))
+							    ((string-equal local-day "-1d") (convert-time--get-next-or-previous-date date "\\." 0 1 2 "--1"))))
+					  (match-day-local (convert-time--get-day-name-from-date local-date "\\." 0 1 2))
+					  (match-day-num-local (convert-time--get-day-from-date local-date "\\." 0))
+					  (match-month-local (convert-time--get-month-name-from-date local-date "\\." 1))
+					  (match-year-local (convert-time--get-year-from-date local-date "\\." 2))
 					  result
 					  home-goals
-					  away-goals)
+					  away-goals
+					  )
+				     (if (< match-year-local 2000)
+					 (setq match-year-local (+ 2000 match-year-local)))
 				     (when (string-equal data-type "results")
 				       (setq result (split-string (nth n results)))
 				       (setq home-goals (car result))
 				       (setq away-goals (nth 0 (last result))))
 				     (if (string-equal data-type "results")
-					 (format "%s %s %s" date local-time 
+					 (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P  
 						 (cond ((> (string-to-number home-goals) (string-to-number away-goals))
 							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--win) (propertize (concat away-goals " " away) 'face 'soccer-face--loss)))
 						       ((< (string-to-number home-goals) (string-to-number away-goals))
 							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--loss) (propertize (concat away-goals " " away) 'face 'soccer-face--win)))
 						       ((= (string-to-number home-goals) (string-to-number away-goals))
 							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--draw) (propertize (concat away-goals " " away) 'face 'soccer-face--draw)))))
-				       (format "%s %s %s - %s" date local-time home away)))))
+				       (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s - %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P home away)))))
     (message "%s" (string-join msg-str "\n"))))
 
 (defun soccer--get-league-data-in-org (league club data-type num-of-results)
