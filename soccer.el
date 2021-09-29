@@ -115,11 +115,11 @@
     num))
 
 (defvar soccer--league-names)
-(setq soccer--league-names (mapcar 'car soccer--leagues))
+(setq soccer--league-names (mapcar 'car soccer-leagues--leagues-alist))
 
 (defun soccer--get-league-url (league club)
   "Get the url for a CLUB of LEAGUE."
-  (let* ((url (cdr (assoc club (cdr (assoc league soccer--leagues))))))
+  (let* ((url (cdr (assoc club (cdr (assoc league soccer-leagues--leagues-alist))))))
     url))
 
 (defun soccer--get-league-data-alist (league club data-type)
@@ -249,7 +249,7 @@
   "Full fixtures of CLUB of LEAGUE saved in a org file."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
-	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
+	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer-leagues--leagues-alist))))))
      (list league-name club-name)))
   (soccer--get-league-data-in-org league club "fixtures" nil))
 
@@ -257,7 +257,7 @@
   "The next match of CLUB of LEAGUE."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
-	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
+	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer-leagues--leagues-alist))))))
      (list league-name club-name)))
   (soccer--get-league-data league club "fixtures" 1))
 
@@ -265,7 +265,7 @@
   "The next 5 matches in fixtures of CLUB of LEAGUE."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
-	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
+	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer-leagues--leagues-alist))))))
      (list league-name club-name)))
   (soccer--get-league-data league club "fixtures" 5))
 
@@ -274,7 +274,7 @@
   "Full results of CLUB of LEAGUE saved in a org file."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
-	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
+	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer-leagues--leagues-alist))))))
      (list league-name club-name)))
   (soccer--get-league-data-in-org league club "results" nil))
 
@@ -282,7 +282,7 @@
   "The last result of CLUB of LEAGUE."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
-	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
+	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer-leagues--leagues-alist))))))
      (list league-name club-name)))
   (soccer--get-league-data league club "results" 1))
 
@@ -290,7 +290,7 @@
   "The last 5 results of CLUB of LEAGUE."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
-	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
+	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer-leagues--leagues-alist))))))
      (list league-name club-name)))
   (soccer--get-league-data league club "results" 5))
 
