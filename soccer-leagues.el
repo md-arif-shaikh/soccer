@@ -3,6 +3,8 @@
 ;; Copyright (C) 2021  Md Arif Shaikh
 
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
+;; Homepage: https://github.com/md-arif-shaikh/soccer
+;; Package-Requires: ((emacs "24.1"))
 ;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -19,7 +21,7 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
+;; This contains list of urls for different clubs to get the relevant data.
 ;; 
 
 ;;; Code:

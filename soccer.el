@@ -1,4 +1,4 @@
-;;; soccer.el --- fixtures, results, etc for soccer  -*- lexical-binding: t; -*-
+;;; soccer.el --- Fixtures, results, etc for soccer  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Md Arif Shaikh
 
@@ -53,7 +53,7 @@
 ;;; Code:
 
 (require 'soccer-leagues)
-(require 'soccer-time-utils)
+(require 'soccer-time)
 (require 'org)
 (require 'dom)
 
@@ -63,6 +63,10 @@
   "Color to indicate a loss.")
 (defvar soccer-color--draw "#56B6C2"
   "Color to indicate a draw.")
+(defvar soccer-color--fixtures "#C678DD"
+  "Color to indicate a fixture.")
+(defvar soccer-color--time-to-kickoff "#E5C07B"
+  "Color to indicate time to kickoff.")
 
 (defface soccer-face--win
   `((t :foreground ,soccer-color--win
@@ -86,6 +90,22 @@
        :box nil
        :underline nil))
   "Face for draw."
+  :group 'soccer-face)
+
+(defface soccer-face--fixtures
+  `((t :foreground ,soccer-color--fixtures
+       :weight extra-bold
+       :box nil
+       :underline nil))
+  "Face for fixtures."
+  :group 'soccer-face)
+
+(defface soccer-face--time-to-kickoff
+  `((t :foreground ,soccer-color--time-to-kickoff
+       :weight extra-bold
+       :box nil
+       :underline nil))
+  "Face for time to kickoff."
   :group 'soccer-face)
 
 (defun soccer--prepend-zero (num)
@@ -155,7 +175,7 @@
     (setq msg-str (cl-loop for n from 0 to (1- num-of-results)
 			   collect (let* ((date (nth n dates))
 					  (time (nth n times))
-					  (local-time-list (soccer--get-local-time-list time date "\\." 0 1 2 soccer--source-time-utc-offfset soccer--local-time-utc-offset))
+					  (local-time-list (soccer-time--get-local-time-list time date "\\." 0 1 2 soccer--source-time-utc-offfset soccer--local-time-utc-offset))
 					  (local-min (nth 0 local-time-list))
 					  (local-hour (nth 1 local-time-list))
 					  (local-A/P (nth 2 local-time-list))
@@ -167,7 +187,14 @@
 					  (away (nth n awayes))
 					  result
 					  home-goals
-					  away-goals)
+					  away-goals
+					  time-till-kickoff-string)
+				     (when (string-equal data-type "fixtures")
+				       (setq time-till-kickoff-string (let* ((time-till-kickoff-list (soccer-time--get-time-till-kick-off time date "\\." 0 1 2 soccer--source-time-utc-offfset soccer--local-time-utc-offset))
+									     (days-remain (nth 0 time-till-kickoff-list))
+									     (hours-remain (nth 1 time-till-kickoff-list))
+									     (mins-remain (nth 2 time-till-kickoff-list)))
+									(format "--> Starts in %s %s %s" (if (> days-remain 0) (format "%s days" days-remain) "") (if (> hours-remain 0) (format "%s hours" hours-remain) "") (if (> mins-remain 0) (format "%s mins" mins-remain) "")))))
 				     (when (string-equal data-type "results")
 				       (setq result (split-string (nth n results)))
 				       (setq home-goals (car result))
@@ -180,7 +207,7 @@
 							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--loss) (propertize (concat away-goals " " away) 'face 'soccer-face--win)))
 						       ((= (string-to-number home-goals) (string-to-number away-goals))
 							(format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--draw) (propertize (concat away-goals " " away) 'face 'soccer-face--draw)))))
-				       (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s - %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P home away)))))
+				       (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s - %s %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P (propertize home 'face 'soccer-face--fixtures) (propertize away 'face 'soccer-face--fixtures) (propertize time-till-kickoff-string 'face 'soccer-face--time-to-kickoff))))))
     (message "%s" (string-join msg-str "\n"))))
 
 (defun soccer--get-league-data-in-org (league club data-type num-of-results)
