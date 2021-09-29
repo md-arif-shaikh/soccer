@@ -185,7 +185,7 @@
       (find-file file-name))))
 
 (defun soccer--fixtures-full-in-org (league club)
-  "Fixtures of CLUB of LEAGUE."
+  "Full fixtures of CLUB of LEAGUE saved in a org file."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
 	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
@@ -193,7 +193,7 @@
   (soccer--get-league-data-in-org league club "fixtures" nil))
 
 (defun soccer--fixtures-next (league club)
-  "Fixtures of CLUB of LEAGUE."
+  "The next match of CLUB of LEAGUE."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
 	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
@@ -201,7 +201,7 @@
   (soccer--get-league-data league club "fixtures" 1))
 
 (defun soccer--fixtures-next-5 (league club)
-  "Fixtures of CLUB of LEAGUE."
+  "The next 5 matches in fixtures of CLUB of LEAGUE."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
 	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
@@ -210,7 +210,7 @@
 
 
 (defun soccer--results-full-in-org (league club)
-  "Fixtures of CLUB of LEAGUE."
+  "Full results of CLUB of LEAGUE saved in a org file."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
 	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
@@ -218,7 +218,7 @@
   (soccer--get-league-data-in-org league club "results" nil))
 
 (defun soccer--results-last (league club)
-  "Fixtures of CLUB of LEAGUE."
+  "The last result of CLUB of LEAGUE."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
 	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
@@ -226,7 +226,7 @@
   (soccer--get-league-data league club "results" 1))
 
 (defun soccer--results-last-5 (league club)
-  "Fixtures of CLUB of LEAGUE."
+  "The last 5 results of CLUB of LEAGUE."
   (interactive
    (let* ((league-name (completing-read "league: " soccer--league-names))
 	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer--leagues))))))
