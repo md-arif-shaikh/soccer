@@ -13,15 +13,10 @@
     (use-package soccer
       :straight (soccer :type git :host github :repo "md-arif-shaikh/soccer"))
   #+END_SRC
-  It also need [[https://github.com/md-arif-shaikh/emacs-convert-time][emacs-convert-time]] for converting source time to local time and can be added similarly
+  To get the time and match day converted to your local time configure the following
   #+BEGIN_SRC emacs-lisp
-    (use-package convert-time
-	:straight (convert-time :type git :host github :repo "md-arif-shaikh/emacs-convert-time"))
-  #+END_SRC
-  Set the source and local time zones using the abbreviations with the following examples
-  #+BEGIN_SRC emacs-lisp
-    (setq soccer--source-time-zone-abrv "CEST")
-    (setq soccer--local-time-zone-abrv "IST")
+    (setq soccer--source-time-utc-offfset "+0200")
+    (setq soccer--local-time-utc-offset "+0530")
   #+END_SRC
 * Common interactive functions
   Call these using ~M-x Function~ where ~Function~ is any of the following functions

@@ -26,19 +26,9 @@
 
 ;;; Code:
 (require 'soccer-leagues)
+(require 'soccer-time-utils)
 (require 'org)
 (require 'dom)
-(require 'convert-time)
-
-(defcustom soccer--local-time-zone-abrv "IST"
-  "Abbreviation for local time zone."
-  :type 'string
-  :group 'soccer)
-
-(defcustom soccer--source-time-zone-abrv "CEST"
-  "Abbreviation for source time zone."
-  :type 'string
-  :group 'soccer)
 
 (defface soccer-face--win
   '((t :foreground "green"
@@ -63,6 +53,12 @@
        :underline nil))
   "Face for draw."
   :group 'soccer-face)
+
+(defun soccer--prepend-zero (num)
+  "Prepend zero to NUM."
+  (if (< num 10)
+      (concat "0" (format "%s" num))
+    num))
 
 (defvar soccer--league-names)
 (setq soccer--league-names (mapcar 'car soccer--leagues))
@@ -107,12 +103,6 @@
 	  ("away" . ,awayes)
 	  ("result" . ,results))))))
 
-(defun soccer--prepend-zero (num)
-  "Prepend zero to NUM."
-  (if (< num 10)
-      (concat "0" (format "%s" num))
-    num))
-
 (defun soccer--get-league-data (league club data-type num-of-results)
   "Get NUM-OF-RESULT number of DATA-TYPE for a CLUB of a LEAGUE."
   (let* ((league-data (soccer--get-league-data-alist league club data-type))
@@ -131,25 +121,19 @@
     (setq msg-str (cl-loop for n from 0 to (1- num-of-results)
 			   collect (let* ((date (nth n dates))
 					  (time (nth n times))
-					  (local-time-list (convert-time--get-converted-time time soccer--source-time-zone-abrv soccer--local-time-zone-abrv))
+					  (local-time-list (soccer--get-local-time-list time date "\\." 0 1 2 soccer--source-time-utc-offfset soccer--local-time-utc-offset))
 					  (local-min (nth 0 local-time-list))
 					  (local-hour (nth 1 local-time-list))
 					  (local-A/P (nth 2 local-time-list))
-					  (local-day (nth 3 local-time-list))
+					  (match-day-local (nth 3 local-time-list))
+					  (match-day-num-local (nth 4 local-time-list))
+					  (match-month-local (nth 5 local-time-list))
+					  (match-year-local (nth 6 local-time-list))
 					  (home (nth n homes))
 					  (away (nth n awayes))
-					  (local-date (cond ((string-equal local-day "+0d") date)
-							    ((string-equal local-day "+1d") (convert-time--get-next-or-previous-date date "\\." 0 1 2 "++1"))
-							    ((string-equal local-day "-1d") (convert-time--get-next-or-previous-date date "\\." 0 1 2 "--1"))))
-					  (match-day-local (convert-time--get-day-name-from-date local-date "\\." 0 1 2))
-					  (match-day-num-local (convert-time--get-day-from-date local-date "\\." 0))
-					  (match-month-local (convert-time--get-month-name-from-date local-date "\\." 1))
-					  (match-year-local (convert-time--get-year-from-date local-date "\\." 2))
 					  result
 					  home-goals
 					  away-goals)
-				     (if (< match-year-local 2000)
-					 (setq match-year-local (+ 2000 match-year-local)))
 				     (when (string-equal data-type "results")
 				       (setq result (split-string (nth n results)))
 				       (setq home-goals (car result))
