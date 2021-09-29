@@ -86,7 +86,7 @@
 					      ("Rennes" . "https://www.scorespro.com/soccer/france/teams/stade-rennais-MTUxODg=/")
 					      ("Saint Etienne" . "https://www.scorespro.com/soccer/france/teams/as-saint-etienne-MTU0NDk=/")
 					      ("Stade Brestois 29" . "https://www.scorespro.com/soccer/france/teams/stade-brestois-29-MjM5MTI=/")
-					      ("Strasbourg" . "https://www.scorespro.com/soccer/france/teams/strasbourg-MjIxOTU=/"))))
+					      ("Strasbourg" . "https://www.scorespro.com/soccer/france/teams/strasbourg-MjIxOTU=/")))))
 
 (provide 'soccer-leagues)
 
