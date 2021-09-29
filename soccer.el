@@ -57,8 +57,15 @@
 (require 'org)
 (require 'dom)
 
+(defvar soccer-color--win "#98C379"
+  "Color to indicate a win.")
+(defvar soccer-color--loss "#BE5046"
+  "Color to indicate a loss.")
+(defvar soccer-color--draw "#56B6C2"
+  "Color to indicate a draw.")
+
 (defface soccer-face--win
-  '((t :foreground "green"
+  `((t :foreground ,soccer-color--win
        :weight extra-bold
        :box nil
        :underline nil))
@@ -66,7 +73,7 @@
   :group 'soccer-face)
 
 (defface soccer-face--loss
-  '((t :foreground "red"
+  `((t :foreground ,soccer-color--loss
        :weight extra-bold
        :box nil
        :underline nil))
@@ -74,7 +81,7 @@
   :group 'soccer-face)
 
 (defface soccer-face--draw
-  '((t :foreground "cyan"
+  `((t :foreground ,soccer-color--draw
        :weight extra-bold
        :box nil
        :underline nil))
@@ -96,7 +103,7 @@
     url))
 
 (defun soccer--get-league-data-alist (league club data-type)
-  "Get data for a CLUB of a LEAGUE."
+  "Get data for DATA-TYPE for a CLUB of a LEAGUE."
   (let* ((url (concat (soccer--get-league-url league club) (format "/%s/" data-type))))
     (with-current-buffer (url-retrieve-synchronously url)
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
