@@ -144,22 +144,18 @@
 	 (local-year (nth 6 local-time-list))
 	 local-time-string
 	 time-delta-seconds
-	 time-delta-mins
-	 time-delta-hours
-	 time-delta-days
-	 hours-remain-after-substracting-days
-	 mins-remain-after-substracting-days-and-hours)
+	 days-remain
+	 hours-remain
+	 mins-remain)
     (when (string-equal A/P "PM")
       (setq local-hour (+ 12 local-hour)))
-    (setq local-time-string (format "%s %s %s %s:%s %s %s" local-monthname local-daynumber local-year local-hour local-min A/P local-utc-offset))
+    (setq local-time-string (format "%s %s, %s %s:%s %s" local-monthname local-daynumber local-year local-hour (if (< local-min 10) (concat "0" (format "%s" local-min)) local-min) local-utc-offset))
     (setq time-delta-seconds (time-subtract (date-to-time local-time-string) 
 					    (date-to-time (current-time-string))))
-    (setq time-delta-days (/ time-delta-seconds (* 24 60 60)))
-    (setq time-delta-hours  (/ time-delta-seconds (* 60 60)))
-    (setq time-delta-mins  (/ time-delta-seconds 60))
-    (setq hours-remain-after-substracting-days (- time-delta-hours (* 24 time-delta-days)))
-    (setq mins-remain-after-substracting-days-and-hours (- time-delta-mins (* 60 time-delta-hours) (* 60 24 time-delta-days)))
-    (list time-delta-days hours-remain-after-substracting-days mins-remain-after-substracting-days-and-hours)))
+    (setq days-remain (/ time-delta-seconds (* 24 60 60)))
+    (setq hours-remain (/ (% time-delta-seconds (* 24 60 60)) (* 60 60)))
+    (setq mins-remain (/ (% (% time-delta-seconds (* 24 60 60)) (* 60 60)) 60))
+    (list days-remain hours-remain mins-remain)))
 
 (provide 'soccer-time)
 ;;; soccer-time.el ends here
