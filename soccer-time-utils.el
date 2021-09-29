@@ -119,7 +119,11 @@
 	  ((>= local-hour 24) (progn
 				(setq local-hour (- local-hour 24))
 				(setq day-offset "++1"))))
-    (setq AM/PM (if (>= 12 local-hour) "PM" "AM"))
+    (if (>= local-hour 12)
+	(progn
+	  (setq local-hour (- local-hour 12))
+	  (setq AM/PM "PM"))
+      (setq AM/PM "AM"))
     (setq local-date (soccer--get-next-or-previous-date date separator day-position month-position year-position day-offset))
     (setq local-dayname (soccer--get-day-name-from-date local-date separator day-position month-position year-position))
     (setq local-daynumber (soccer--get-day-from-date local-date separator day-position))
