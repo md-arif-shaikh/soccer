@@ -27,6 +27,7 @@
 ;;
 ;; 1. Premier League (England)
 ;; 2. La Liga (Spain)
+;; 3. League 1 (France)
 ;;
 ;; Other leagues could be easily included and would be in future.
 ;;
