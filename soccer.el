@@ -158,8 +158,8 @@
 	  ("result" . ,results))))))
 
 
-(defun soccer--get-league-data-fixture-stings (dates times homes aways)
-  "Get the fixtures stings to show in buffer for given DATES, TIMES, HOMES and AWAYS."
+(defun soccer--get-league-data-fixture-stings (dates times homes aways n)
+  "Get the fixtures stings to show in buffer for given DATES, TIMES, HOMES and AWAYS and N, where is the nth in the results."
   (let* ((date (nth n dates))
 	 (time (nth n times))
 	 (local-time-list (soccer-time--get-local-time-list time date "\\." 0 1 2 soccer-time--source-time-utc-offset soccer-time--local-time-utc-offset))
@@ -180,8 +180,8 @@
     (setq time-till-kickoff-string (format "--> Starts in %s %s %s" (if (> days-remain 0) (format "%s days" days-remain) "") (if (> hours-remain 0) (format "%s hours" hours-remain) "") (if (> mins-remain 0) (format "%s mins" mins-remain) "")))
     (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s - %s %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P (propertize home 'face 'soccer-face--fixtures) (propertize away 'face 'soccer-face--fixtures) (propertize time-till-kickoff-string 'face 'soccer-face--time-to-kickoff))))
 
-(defun soccer--get-league-data-results-stings (dates times homes aways results)
-  "Get the fixtures stings to show in buffer for given DATES, TIMES, HOMES, AWAYS and RESULTS."
+(defun soccer--get-league-data-results-stings (dates times homes aways results n)
+  "Get the fixtures stings to show in buffer for given DATES, TIMES, HOMES, AWAYS and RESULTS and N, where is the nth in the results."
   (let* ((date (nth n dates))
 	 (time (nth n times))
 	 (local-time-list (soccer-time--get-local-time-list time date "\\." 0 1 2 soccer-time--source-time-utc-offset soccer-time--local-time-utc-offset))
@@ -194,9 +194,9 @@
 	 (match-year-local (nth 6 local-time-list))
 	 (home (nth n homes))
 	 (away (nth n aways))
-	 result (split-string (nth n results))
-	 home-goals (car result)
-	 away-goals (nth 0 (last result)))
+	 (result (split-string (nth n results)))
+	 (home-goals (car result))
+	 (away-goals (nth 0 (last result))))
     (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P
 	    (cond ((> (string-to-number home-goals) (string-to-number away-goals))
 		   (format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--win) (propertize (concat away-goals " " away) 'face 'soccer-face--loss)))
@@ -221,9 +221,9 @@
 	(setq num-of-results (min number-of-results num-of-results))
       (setq num-of-results number-of-results))
     (setq msg-str (cl-loop for n from 0 to (1- num-of-results)
-			   collect (cond ((string-equal data-type "fixtures") (soccer--get-league-data-fixture-stings dates times homes aways))
-					 ((string-equal data-type "results") (soccer--get-league-data-results-stings dates times homes aways results))))
-    (message "%s" (string-join msg-str "\n")))))
+			   collect (cond ((string-equal data-type "fixtures") (soccer--get-league-data-fixture-stings dates times homes aways n))
+					 ((string-equal data-type "results") (soccer--get-league-data-results-stings dates times homes aways results n)))))
+    (message "%s" (string-join msg-str "\n"))))
 
 (defun soccer--get-league-data-in-org (league club data-type num-of-results)
   "Get NUM-OF-RESULT number of DATA-TYPE for a CLUB of a LEAGUE."
