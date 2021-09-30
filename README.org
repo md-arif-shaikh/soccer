@@ -16,8 +16,8 @@
   #+END_SRC
   To get the time and match day converted to your local time configure the following
   #+BEGIN_SRC emacs-lisp
-    (setq soccer--source-time-utc-offset "+0200")
-    (setq soccer--local-time-utc-offset "+0530")
+    (setq soccer-time--source-time-utc-offset "+0200")
+    (setq soccer-time--local-time-utc-offset "+0530")
   #+END_SRC
 * Common interactive functions
   Call these using ~M-x Function~ where ~Function~ is any of the following functions
