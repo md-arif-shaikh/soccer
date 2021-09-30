@@ -175,7 +175,7 @@
     (setq msg-str (cl-loop for n from 0 to (1- num-of-results)
 			   collect (let* ((date (nth n dates))
 					  (time (nth n times))
-					  (local-time-list (soccer-time--get-local-time-list time date "\\." 0 1 2 soccer-time--source-time-utc-offfset soccer-time--local-time-utc-offset))
+					  (local-time-list (soccer-time--get-local-time-list time date "\\." 0 1 2 soccer-time--source-time-utc-offset soccer-time--local-time-utc-offset))
 					  (local-min (nth 0 local-time-list))
 					  (local-hour (nth 1 local-time-list))
 					  (local-A/P (nth 2 local-time-list))
@@ -190,7 +190,7 @@
 					  away-goals
 					  time-till-kickoff-string)
 				     (when (string-equal data-type "fixtures")
-				       (setq time-till-kickoff-string (let* ((time-till-kickoff-list (soccer-time--get-time-till-kick-off time date "\\." 0 1 2 soccer-time--source-time-utc-offfset soccer-time--local-time-utc-offset))
+				       (setq time-till-kickoff-string (let* ((time-till-kickoff-list (soccer-time--get-time-till-kick-off time date "\\." 0 1 2 soccer-time--source-time-utc-offset soccer-time--local-time-utc-offset))
 									     (days-remain (nth 0 time-till-kickoff-list))
 									     (hours-remain (nth 1 time-till-kickoff-list))
 									     (mins-remain (nth 2 time-till-kickoff-list)))

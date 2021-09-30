@@ -32,7 +32,7 @@
   :type 'string
   :group 'soccer)
 
-(defcustom soccer-time--source-time-utc-offfset "+0200"
+(defcustom soccer-time--source-time-utc-offset "+0200"
   "UTC offfset for source time zone."
   :type 'string
   :group 'soccer)
