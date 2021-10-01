@@ -119,8 +119,7 @@
 
 (defun soccer--get-league-url (league club)
   "Get the url for a CLUB of LEAGUE."
-  (let* ((url (cdr (assoc club (cdr (assoc league soccer-leagues--leagues-alist))))))
-    url))
+(cdr (assoc club (cdr (assoc league soccer-leagues--leagues-alist)))))
 
 (defun soccer--get-league-data-alist (league club data-type)
   "Get data for DATA-TYPE for a CLUB of a LEAGUE."
@@ -132,7 +131,6 @@
 	     (homes-dom (dom-by-class dom "home_o"))
 	     (aways-dom (dom-by-class dom "away_o"))
 	     results-dom
-	     (file-name (format "/tmp/soccer_%s_%s.org" club data-type))
 	     (number-of-results (length dates-dom))
 	     dates
 	     times
@@ -156,7 +154,6 @@
 	  ("home" . ,homes)
 	  ("away" . ,aways)
 	  ("result" . ,results))))))
-
 
 (defun soccer--get-league-data-fixture-stings (dates times homes aways n)
   "Get the fixtures stings to show in buffer for given DATES, TIMES, HOMES and AWAYS and N, where is the nth in the results."
