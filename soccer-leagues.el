@@ -1,4 +1,4 @@
-;;; soccer-leagues.el --- part of soccer.el, data for soccer leagues  -*- lexical-binding: t; -*-
+;;; soccer-leagues.el --- Part of soccer.el, data for soccer leagues  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Md Arif Shaikh
 
@@ -6,6 +6,7 @@
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: games
+;; Version: 0.1.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
