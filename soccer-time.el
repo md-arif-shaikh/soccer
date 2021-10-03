@@ -5,7 +5,7 @@
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
 ;; Package-Requires: ((emacs "24.4"))
-;; Keywords: 
+;; Keywords: games, calendar
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@
     (when (string-equal A/P "PM")
       (setq local-hour (+ 12 local-hour)))
     (setq local-time-string (format "%s %s, %s %s:%s %s" local-monthname local-daynumber local-year local-hour (if (< local-min 10) (concat "0" (format "%s" local-min)) local-min) local-utc-offset))
-    (setq time-delta-seconds (time-subtract (date-to-time local-time-string) 
+    (setq time-delta-seconds (time-subtract (date-to-time local-time-string)
 					    (date-to-time (current-time-string))))
     (setq days-remain (/ time-delta-seconds (* 24 60 60)))
     (setq hours-remain (/ (% time-delta-seconds (* 24 60 60)) (* 60 60)))
