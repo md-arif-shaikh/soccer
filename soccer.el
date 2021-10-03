@@ -35,8 +35,8 @@
 ;; To get the time of kick off in your local time, you may want to set the
 ;; following values accordingly
 ;;
-;; (setq soccer--source-time-utc-offset "+0200") ;; this is not needed to change in most cases
-;; (setq soccer--local-time-utc-offset "+0530") ;; this should be changed to your local one
+;; (setq soccer-source-time-utc-offset "+0200") ;; this is not needed to change in most cases
+;; (setq soccer-local-time-utc-offset "+0530") ;; this should be changed to your local one
 ;;
 ;; Common Functions:
 ;;
@@ -57,6 +57,7 @@
 (require 'soccer-time)
 (require 'org)
 (require 'dom)
+(require 'dash)
 
 (defvar soccer-color--win "#98C379"
   "Color to indicate a win.")
@@ -160,7 +161,7 @@
   "Get the fixtures stings to show in buffer for given DATES, TIMES, HOMES and AWAYS and N, where is the nth in the results."
   (let* ((date (nth n dates))
 	 (time (nth n times))
-	 (local-time-list (soccer-time--get-local-time-list time date "\\." 0 1 2 soccer-time--source-time-utc-offset soccer-time--local-time-utc-offset))
+	 (local-time-list (soccer-time--get-local-time-list time date "\\." 0 1 2 soccer-time-source-time-utc-offset soccer-time-local-time-utc-offset))
 	 (local-min (nth 0 local-time-list))
 	 (local-hour (nth 1 local-time-list))
 	 (local-A/P (nth 2 local-time-list))
@@ -170,7 +171,7 @@
 	 (match-year-local (nth 6 local-time-list))
 	 (home (nth n homes))
 	 (away (nth n aways))
-	 (time-till-kickoff-list (soccer-time--get-time-till-kick-off time date "\\." 0 1 2 soccer-time--source-time-utc-offset soccer-time--local-time-utc-offset))
+	 (time-till-kickoff-list (soccer-time--get-time-till-kick-off time date "\\." 0 1 2 soccer-time-source-time-utc-offset soccer-time-local-time-utc-offset))
 	 (days-remain (nth 0 time-till-kickoff-list))
 	 (hours-remain (nth 1 time-till-kickoff-list))
 	 (mins-remain (nth 2 time-till-kickoff-list))
@@ -182,7 +183,7 @@
   "Get the fixtures stings to show in buffer for given DATES, TIMES, HOMES, AWAYS and RESULTS and N, where is the nth in the results."
   (let* ((date (nth n dates))
 	 (time (nth n times))
-	 (local-time-list (soccer-time--get-local-time-list time date "\\." 0 1 2 soccer-time--source-time-utc-offset soccer-time--local-time-utc-offset))
+	 (local-time-list (soccer-time--get-local-time-list time date "\\." 0 1 2 soccer-time-source-time-utc-offset soccer-time-local-time-utc-offset))
 	 (local-min (nth 0 local-time-list))
 	 (local-hour (nth 1 local-time-list))
 	 (local-A/P (nth 2 local-time-list))
@@ -257,6 +258,23 @@
       (org-table-align)
       (write-region (point-min) (point-max) file-name)
       (find-file file-name))))
+
+(defun soccer--league-table (league)
+  "Get standing table for a LEAGUE."
+  (interactive
+   (list (completing-read "league: " soccer--league-names)))
+  (let* ((url (soccer--get-league-url league "Table")))
+    (with-current-buffer (url-retrieve-synchronously url)
+      (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
+	     (dom-strings-list (-remove #'string-blank-p (dom-strings (nth 0 (dom-by-tag dom 'table)))))
+	     (table-header-strings-list (-take 12 dom-strings-list))
+	     (results-strings-list (-partition 15 (-drop 12 dom-strings-list)))
+	     results-strings)
+	(setq results-strings (cl-loop for result in results-strings-list
+				      collect (let* ((form-list (-take-last 5 result))
+						     (form-string (string-join form-list)))
+						(string-join (-flatten (list (-take 10 result) form-string)) " "))))
+        (message (string-join (-flatten (list (string-join table-header-strings-list " ") (string-join results-strings "\n"))) "\n"))))))
 
 (defun soccer--fixtures-full-in-org (league club)
   "Full fixtures of CLUB of LEAGUE saved in a org file."

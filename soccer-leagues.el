@@ -20,6 +20,10 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+;; Local variables:
+;; package-lint-main-file: "soccer.el"
+;; end:
+
 ;;; Commentary:
 ;; This contains list of urls for different clubs to get the relevant data.
 ;; 
@@ -48,7 +52,8 @@
 								    ("Watford" . "https://www.scorespro.com/soccer/england/teams/watford-fc-MTA4NTE=/")
 								    ("Westbrom" . "https://www.scorespro.com/soccer/england/teams/west-bromwich-MjQ1NA==/")
 								    ("Fulham" . "https://www.scorespro.com/soccer/england/teams/fulham-fc-MjQyMg==/")
-								    ("Burnley" . "https://www.scorespro.com/soccer/england/teams/burnley-fc-MTA4MzQ=/")))
+								    ("Burnley" . "https://www.scorespro.com/soccer/england/teams/burnley-fc-MTA4MzQ=/")
+								    ("Table" . "https://www.scorespro.com/soccer/england/premier-league/standings/")))
 				      ("Spain: La Liga" . (("Real Madrid" . "https://www.scorespro.com/soccer/spain/teams/real-madrid-NDE4MA==/")
 							   ("Barcelona". "https://www.scorespro.com/soccer/spain/teams/fc-barcelona-MTc3NjI=/")
 							   ("Atletico Madrid". "https://www.scorespro.com/soccer/spain/teams/atletico-madrid-MTgwNjM=/")
@@ -68,7 +73,8 @@
 							   ("Real Sociedad" . "https://www.scorespro.com/soccer/spain/teams/real-sociedad-MTgwMzI=/")
 							   ("Sevilla" . "https://www.scorespro.com/soccer/spain/teams/sevilla-MjYyNTM=/")
 							   ("Valencia" . "https://www.scorespro.com/soccer/spain/teams/valencia-MTgwMzc=/")
-							   ("Villarreal" . "https://www.scorespro.com/soccer/spain/teams/villarreal-MTc4NDI=/")))
+							   ("Villarreal" . "https://www.scorespro.com/soccer/spain/teams/villarreal-MTc4NDI=/")
+							   ("Table" . "https://www.scorespro.com/soccer/spain/laliga/standings/")))
 				      ("France: Ligue 1" . (("Paris Saint Germain" . "https://www.scorespro.com/soccer/france/teams/paris-saint-germain-MzI5NQ==/")
 							    ("Lyon" . "https://www.scorespro.com/soccer/france/teams/lyon-MzI4OA==/")
 							    ("Angers" . "https://www.scorespro.com/soccer/france/teams/angers-MTU0NTQ=/")
@@ -88,7 +94,8 @@
 							    ("Rennes" . "https://www.scorespro.com/soccer/france/teams/stade-rennais-MTUxODg=/")
 							    ("Saint Etienne" . "https://www.scorespro.com/soccer/france/teams/as-saint-etienne-MTU0NDk=/")
 							    ("Stade Brestois 29" . "https://www.scorespro.com/soccer/france/teams/stade-brestois-29-MjM5MTI=/")
-							    ("Strasbourg" . "https://www.scorespro.com/soccer/france/teams/strasbourg-MjIxOTU=/")))))
+							    ("Strasbourg" . "https://www.scorespro.com/soccer/france/teams/strasbourg-MjIxOTU=/")
+							    ("Table" . "https://www.scorespro.com/soccer/france/ligue-1/standings/")))))
 
 (provide 'soccer-leagues)
 

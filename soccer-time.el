@@ -20,6 +20,10 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+;; Local variables:
+;; package-lint-main-file: "soccer.el"
+;; end:
+
 ;;; Commentary:
 ;; Utilities for conversion of time to local time and other nice stuffs
 ;; 
@@ -27,12 +31,12 @@
 ;;; Code:
 
 (require 'org)
-(defcustom soccer-time--local-time-utc-offset "+0530"
+(defcustom soccer-time-local-time-utc-offset "+0530"
   "UTC offfset for local time zone."
   :type 'string
   :group 'soccer)
 
-(defcustom soccer-time--source-time-utc-offset "+0200"
+(defcustom soccer-time-source-time-utc-offset "+0200"
   "UTC offfset for source time zone."
   :type 'string
   :group 'soccer)
