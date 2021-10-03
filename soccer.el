@@ -1,4 +1,4 @@
-;;; soccer.el --- Fixtures, results, etc for soccer  -*- lexical-binding: t; -*-
+;;; soccer.el --- Fixtures, results, table etc for soccer  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Md Arif Shaikh
 
@@ -23,7 +23,7 @@
 
 ;;; Commentary:
 ;;
-;; This package brings soccer (football) fixtures, results in your Emacs.
+;; This package brings soccer (football) fixtures, results, table in your Emacs.
 ;; Currently it works for
 ;;
 ;; 1. Premier League (England)
@@ -50,6 +50,7 @@
 ;; soccer--results-last	        Result of the last match
 ;; soccer--results-last-5	Results of the last 5 matches
 ;; soccer--results-full-in-org	Full list of results in org file
+;; soccer--league-table         Ranking table
 
 ;;; Code:
 
