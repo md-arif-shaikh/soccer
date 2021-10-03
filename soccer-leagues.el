@@ -1,4 +1,4 @@
-;;; soccer-leauges.el --- part of soccer.el, data for soccer leagues  -*- lexical-binding: t; -*-
+;;; soccer-leagues.el --- part of soccer.el, data for soccer leagues  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Md Arif Shaikh
 
