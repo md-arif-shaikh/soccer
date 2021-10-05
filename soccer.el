@@ -5,7 +5,7 @@
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
 ;; Package-Requires: ((emacs "25.1") (dash "2.19.1"))
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; Keywords: games
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,9 @@
 ;; soccer--results-last	        Result of the last match
 ;; soccer--results-last-5	Results of the last 5 matches
 ;; soccer--results-full-in-org	Full list of results in org file
-;; soccer--league-table         Ranking table
+;; soccer--table                Full Ranking table
+;; soccer--table-top-4          Ranking table with top 4 teams
+;; soccer--table-bottom-4       Ranking table with bottom 4 teams
 
 ;;; Code:
 
@@ -110,12 +112,6 @@
        :underline nil))
   "Face for time to kickoff."
   :group 'soccer-face)
-
-(defun soccer--prepend-zero (num)
-  "Prepend zero to NUM."
-  (if (< num 10)
-      (concat "0" (format "%s" num))
-    num))
 
 (defvar soccer--league-names)
 (setq soccer--league-names (mapcar 'car soccer-leagues--leagues-alist))
@@ -178,7 +174,7 @@
 	 (mins-remain (nth 2 time-till-kickoff-list))
 	 time-till-kickoff-string)
     (setq time-till-kickoff-string (format "--> Starts in %s %s %s" (if (> days-remain 0) (format "%s days" days-remain) "") (if (> hours-remain 0) (format "%s hours" hours-remain) "") (if (> mins-remain 0) (format "%s mins" mins-remain) "")))
-    (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s - %s %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P (propertize home 'face 'soccer-face--fixtures) (propertize away 'face 'soccer-face--fixtures) (propertize time-till-kickoff-string 'face 'soccer-face--time-to-kickoff))))
+    (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s - %s %s" date time match-year-local match-month-local (format "%02d" match-day-num-local) match-day-local (format "%02d" local-hour) (format "%02d" local-min) local-A/P (propertize home 'face 'soccer-face--fixtures) (propertize away 'face 'soccer-face--fixtures) (propertize time-till-kickoff-string 'face 'soccer-face--time-to-kickoff))))
 
 (defun soccer--get-league-data-results-stings (dates times homes aways results n)
   "Get the fixtures stings to show in buffer for given DATES, TIMES, HOMES, AWAYS and RESULTS and N, where is the nth in the results."
@@ -197,7 +193,7 @@
 	 (result (split-string (nth n results)))
 	 (home-goals (car result))
 	 (away-goals (nth 0 (last result))))
-    (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s" date time match-year-local match-month-local (soccer--prepend-zero match-day-num-local) match-day-local (soccer--prepend-zero local-hour) (soccer--prepend-zero local-min) local-A/P
+    (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s" date time match-year-local match-month-local (format "%02d" match-day-num-local) match-day-local (format "%02d" local-hour) (format "%02d" local-min) local-A/P
 	    (cond ((> (string-to-number home-goals) (string-to-number away-goals))
 		   (format "%s - %s" (propertize (concat home " " home-goals) 'face 'soccer-face--win) (propertize (concat away-goals " " away) 'face 'soccer-face--loss)))
 		  ((< (string-to-number home-goals) (string-to-number away-goals))
@@ -276,6 +272,97 @@
 						     (form-string (string-join form-list)))
 						(string-join (-flatten (list (-take 10 result) form-string)) " "))))
         (message (string-join (-flatten (list (string-join table-header-strings-list " ") (string-join results-strings "\n"))) "\n"))))))
+
+(defun soccer--get-league-table-data-alist (league)
+  "Get data alist for standing table for a LEAGUE."
+  (let* ((url (soccer--get-league-url league "Table")))
+    (with-current-buffer (url-retrieve-synchronously url)
+      (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
+	     (dom-strings-list (-remove #'string-blank-p (dom-strings (nth 0 (dom-by-tag dom 'table)))))
+	     (results-strings-list (-partition 15 (-drop 12 dom-strings-list)))
+	     teams
+	     played
+	     wins
+	     losses
+	     goal-for
+	     goal-against
+	     current-form-list)
+	(setq teams (cl-loop for result in results-strings-list
+			     collect (nth 2 result)))
+	(setq played (cl-loop for result in results-strings-list
+			      collect (nth 3 result)))
+	(setq wins (cl-loop for result in results-strings-list
+			    collect (nth 4 result)))
+	(setq losses (cl-loop for result in results-strings-list
+			      collect (nth 6 result)))
+	(setq goal-for (cl-loop for result in results-strings-list
+				collect (car (split-string (nth 7 result)))))
+	(setq goal-against (cl-loop for result in results-strings-list
+				    collect (nth 2 (split-string (nth 7 result)))))
+	(setq current-form-list (cl-loop for result in results-strings-list
+				    collect (-take-last 5 result)))
+        `(("teams" . ,teams)
+	  ("played" . ,played)
+	  ("wins" . ,wins)
+	  ("losses" . ,losses)
+	  ("goal-for" . ,goal-for)
+	  ("goal-against" . ,goal-against)
+	  ("current-form-list" . ,current-form-list))))))
+
+(defun soccer--table-data (league num top/bottom)
+  "Get table for LEAGUE with TOP/BOTTOM NUM teams."
+  (let* ((data-alist (soccer--get-league-table-data-alist league))
+	 (teams (cdr (assoc "teams" data-alist)))
+	 (played (cdr (assoc "played" data-alist)))
+	 (wins (cdr (assoc "wins" data-alist)))
+	 (losses (cdr (assoc "losses" data-alist)))
+	 (goal-for (cdr (assoc "goal-for" data-alist)))
+	 (goal-against (cdr (assoc "goal-against" data-alist)))
+	 (current-form-list (cdr (assoc "current-form-list" data-alist)))
+	 (num-result (min num (length teams)))
+	 (start (if (string-equal top/bottom "top") 0 (- (length teams) num-result)))
+	 (stop (if (string-equal top/bottom "top") (1- num-result) (1- (length teams))))
+	 (header-string (string-join (list "Rank" "Team" "Played" "Won" "Lost" "Drawn" (format "%3s" "GF") (format "%3s" "GA") (format "%3s" "GD") "Points" (format "%5s" "Form")) " "))
+	 table-string)
+    (setq table-string (cl-loop for n from start to stop
+				collect (let ((team (nth n teams))
+					      (matches (nth n played))
+					      (win (string-to-number (nth n wins)))
+					      (loss (string-to-number (nth n losses)))
+					      (goalF (string-to-number (nth n goal-for)))
+					      (goalA (string-to-number (nth n goal-against)))
+					      (current-form (nth n current-form-list))
+					      current-form-string-list
+					      draw)
+					  (setq draw (- (string-to-number matches) win loss))
+					  (setq current-form-string-list (cl-loop for form-string in current-form
+										  collect (cond ((string-equal form-string "W") (propertize form-string 'face 'soccer-face--win))
+												((string-equal form-string "L") (propertize form-string 'face 'soccer-face--loss))
+												((string-equal form-string "D") (propertize form-string 'face 'soccer-face--draw)))))
+					  (string-join (list (format "%4s" (1+ n)) (format "%4s" team) (format "%6s" matches) (propertize (format "%3s" win) 'face 'soccer-face--win) (propertize (format "%4s" loss) 'face 'soccer-face--loss) (propertize (format "%5s" draw) 'face 'soccer-face--draw) (format "%3s" goalF) (format "%3s" goalA) (format "%3s" (- goalF goalA)) (format "%3s" (+ (* 3 win) draw)) (format "%8s" (string-join current-form-string-list))) " "))))
+    (string-join (-insert-at 0 header-string table-string) "\n")))
+
+(defun soccer--table-top-4 (league)
+  "Get table for LEAGUE with top 4 teams."
+  (interactive
+   (list (completing-read "league: " soccer--league-names)))
+  (message (soccer--table-data league 4 "top")))
+
+(defun soccer--table-bottom-4 (league)
+  "Get table for LEAGUE with bottom 4 teams."
+  (interactive
+   (list (completing-read "league: " soccer--league-names)))
+  (message (soccer--table-data league 4 "bottom")))
+
+(defun soccer--table (league)
+  "Get full rank table of a LEAGUE."
+  (interactive
+   (list (completing-read "league: " soccer--league-names)))
+  (let ((buffer-name "*soccer-rank-table*"))
+    (generate-new-buffer buffer-name)
+    (with-current-buffer buffer-name
+      (insert (soccer--table-data league 30 "top")))
+    (switch-to-buffer-other-window buffer-name)))
 
 (defun soccer--fixtures-full-in-org (league club)
   "Full fixtures of CLUB of LEAGUE saved in a org file."
