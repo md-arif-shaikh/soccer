@@ -37,3 +37,7 @@
     #+html: <p align="center"><img src="screenshots/soccer--fixtures-next-5.png"/></p>
   - ~soccer--results-last-5~
     #+html: <p align="center"><img src="screenshots/soccer--results-last-5.png"/></p>
+  - ~soccer--table-top-4~
+    #+html: <p align="center"><img src="screenshots/soccer--table-top-4.png"/></p>
+  - ~soccer--table~
+    #+html: <p align="center"><img src="screenshots/soccer--table.png"/></p>
