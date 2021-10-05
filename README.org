@@ -29,7 +29,9 @@
   | ~soccer--results-last~         | Result of the last match         |
   | ~soccer--results-last-5~       | Results of the last 5 matches    |
   | ~soccer--results-full-in-org~  | Full list of results in org file |
-  | ~soccer--league-table~         | Ranking table                    |
+  | ~soccer--table~                | Full Ranking table               |
+  | ~soccer--table-top-4~          | Rank table with top 4 teams      |
+  | ~soccer--table-bottom-4~       | Rank table with bottom 4 teams   |
 * Screenshots
   - ~soccer--fixtures-next-5~
     #+html: <p align="center"><img src="screenshots/soccer--fixtures-next-5.png"/></p>
