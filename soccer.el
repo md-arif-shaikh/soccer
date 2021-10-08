@@ -35,7 +35,7 @@
 ;; To get the time of kick off in your local time, you may want to set the
 ;; following value accordingly
 ;;
-;; (setq soccer-local-time-utc-offset "+0530") ;; this should be changed to your local one
+;; (setq soccer-time-local-time-utc-offset "+0530") ;; this should be changed to your local one
 ;;
 ;; Common Functions:
 ;;
