@@ -35,8 +35,10 @@
   - ~soccer--fixtures-next-5~
     #+html: <div> <img src="./screenshots/soccer-fixtures-next-5.png"> </div>
   - ~soccer--results-last-5~
-    #+html <div> <img src="./screenshots/soccer-results-last-5.png"> </div>
+    #+html: <div> <img src="./screenshots/soccer-results-last-5.png"> </div>
   - ~soccer--table-top-4~
-    #+html: <p align="center"><img src="screenshots/soccer--table-top-4.png"/></p>
+    #+html: <div> <img src="./screenshots/soccer-table-top-4.png"></div>
+  - ~soccer--table-bottom-4~
+    #+html: <div> <img src="./screenshots/soccer-table-bottom-4.png"></div>
   - ~soccer--table~
-    #+html: <p align="center"><img src="screenshots/soccer--table.png"/></p>
+    #+html: <div> <img src="./screenshots/soccer-table.png"></div>
