@@ -219,7 +219,6 @@
 	 results
 	 msg-str
 	 (number-of-results (length dates)))
-    (message source-time-utc-offset)
     (when (string-equal data-type "results")
       (setq results (cdr (assoc "result" league-data))))
     (if num-of-results
@@ -264,23 +263,6 @@
       (org-table-align)
       (write-region (point-min) (point-max) file-name)
       (find-file file-name))))
-
-(defun soccer--league-table (league)
-  "Get standing table for a LEAGUE."
-  (interactive
-   (list (completing-read "league: " soccer--league-names)))
-  (let* ((url (soccer--get-league-url league "Table")))
-    (with-current-buffer (url-retrieve-synchronously url)
-      (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
-	     (dom-strings-list (-remove #'string-blank-p (dom-strings (nth 0 (dom-by-tag dom 'table)))))
-	     (table-header-strings-list (-take 12 dom-strings-list))
-	     (results-strings-list (-partition 15 (-drop 12 dom-strings-list)))
-	     results-strings)
-	(setq results-strings (cl-loop for result in results-strings-list
-				      collect (let* ((form-list (-take-last 5 result))
-						     (form-string (string-join form-list)))
-						(string-join (-flatten (list (-take 10 result) form-string)) " "))))
-        (message (string-join (-flatten (list (string-join table-header-strings-list " ") (string-join results-strings "\n"))) "\n"))))))
 
 (defun soccer--get-league-table-data-alist (league)
   "Get data alist for standing table for a LEAGUE."
