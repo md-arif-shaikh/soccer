@@ -32,8 +32,10 @@
   | ~soccer--table-top-4~          | Rank table with top 4 teams      |
   | ~soccer--table-bottom-4~       | Rank table with bottom 4 teams   |
 * Screenshots
-  - ~soccer--fixtures-next-5~ and ~soccer--results-last-5~
-    #+html: <div> <img src="./screenshots/soccer-fixtures-next-5.png" width=47.5%> <img src="./screenshots/soccer-results-last-5.png" width=47.5%> </div>
+  - ~soccer--fixtures-next-5~
+    #+html: <div> <img src="./screenshots/soccer-fixtures-next-5.png"> </div>
+  - ~soccer--results-last-5~
+    #+html <div> <img src="./screenshots/soccer-results-last-5.png"> </div>
   - ~soccer--table-top-4~
     #+html: <p align="center"><img src="screenshots/soccer--table-top-4.png"/></p>
   - ~soccer--table~
