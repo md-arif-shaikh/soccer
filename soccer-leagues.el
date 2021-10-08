@@ -6,7 +6,7 @@
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: games
-;; Version: 0.1.2
+;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

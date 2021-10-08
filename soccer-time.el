@@ -6,7 +6,7 @@
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: games, calendar
-;; Version: 0.1.2
+;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -34,11 +34,6 @@
 (require 'org)
 (defcustom soccer-time-local-time-utc-offset "+0530"
   "UTC offfset for local time zone."
-  :type 'string
-  :group 'soccer)
-
-(defcustom soccer-time-source-time-utc-offset "+0200"
-  "UTC offfset for source time zone."
   :type 'string
   :group 'soccer)
 
