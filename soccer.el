@@ -5,7 +5,7 @@
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
 ;; Package-Requires: ((emacs "26.1") (dash "2.19.1"))
-;; Version: 0.1
+;; Version: 1.0.0
 ;; Keywords: games, soccer, football
 
 ;; This program is free software; you can redistribute it and/or modify
