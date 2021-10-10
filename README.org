@@ -2,6 +2,9 @@
 #+AUTHOR: Md Arif Shaikh
 #+EMAIL: arifshaikh.astro@gmail.com
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/md-arif-shaikh/soccer)
+![GitHub](https://img.shields.io/github/license/md-arif-shaikh/soccer)
+
 * About the package
   ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results, standing table for soccer (football) matches inside emacs. Currently it works for
   - Premier League (England)
