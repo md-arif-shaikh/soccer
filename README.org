@@ -8,7 +8,7 @@
   ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results, standing table for soccer (football) matches inside emacs. Currently it works for
   - Premier League (England)
   - La Liga (Spain)
-  - League 1 (France)
+  - Ligue 1 (France)
   But could be easily extended to add other leagues around the world. All data are fetched from ~scorespro~ website.
 * Installation
   It's available in [[https://melpa.org/#/][Melpa]]. Look [[https://melpa.org/#/getting-started][here]] for instruction for installation. One can also install it using ~straight~ and ~use-package~
