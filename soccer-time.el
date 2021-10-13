@@ -27,7 +27,7 @@
 
 ;;; Commentary:
 ;; Utilities for conversion of time to local time and other nice stuffs
-;; 
+;;
 
 ;;; Code:
 
@@ -47,6 +47,8 @@
 	 (day (string-to-number (nth day-position splitted-strings)))
 	 (month (string-to-number (nth month-position splitted-strings)))
 	 (year (string-to-number (nth year-position splitted-strings))))
+    (when (< year 100)
+      (setq year (+ year 2000)))
     (list day month year)))
 
 (defun soccer-time--get-day-name-from-date (date separator day-position month-position year-position)
