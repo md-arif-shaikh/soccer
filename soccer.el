@@ -5,7 +5,7 @@
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
 ;; Package-Requires: ((emacs "26.1") (dash "2.19.1"))
-;; Version: 1.0.0
+;; Version: 1.1.0
 ;; Keywords: games, soccer, football
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 ;;
 ;; 1. Premier League (England)
 ;; 2. La Liga (Spain)
-;; 3. League 1 (France)
+;; 3. Ligue 1 (France)
 ;;
 ;; Other leagues could be easily included and would be in future.
 ;;
@@ -49,9 +49,10 @@
 ;; soccer-results-last	        Result of the last match
 ;; soccer-results-last-5	Results of the last 5 matches
 ;; soccer-results-full-in-org	Full list of results in org file
-;; soccer-table                Full Ranking table
-;; soccer-table-top-4          Ranking table with top 4 teams
-;; soccer-table-bottom-4       Ranking table with bottom 4 teams
+;; soccer-table                 Full Ranking table
+;; soccer-table-top-4           Ranking table with top 4 teams
+;; soccer-table-bottom-4        Ranking table with bottom 4 teams
+;; soccer-scorecard             Scorecard of a match
 
 ;;; Code:
 
@@ -411,28 +412,46 @@
   (let* ((live-match-url (downcase (string-replace " " "-" (concat "https://www.scorespro.com/soccer/livescore/" home "-vs-" away "/" date "/")))))
     (with-current-buffer (url-retrieve-synchronously live-match-url)
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
+	     (title (dom-strings (dom-by-tag dom 'title)))
 	     (home-goal-scorers (dom-strings (dom-by-class dom "sp-goalscorers__home-team")))
 	     (away-goal-scorers (dom-strings (dom-by-class dom "sp-goalscorers__away-team")))
 	     (home-goals (/ (length home-goal-scorers) 2))
 	     (away-goals (/ (length away-goal-scorers) 2))
-	     (home-scorecard-strings-list (if (> home-goals 0)
-					      (cl-loop for g in (-partition 2 home-goal-scorers)
-						       collect (format "%s %s" (-first-item g) (-last-item g)))
-					    ""))
-	     (away-scorecard-strings-list (if (> away-goals 0)
-					      (cl-loop for g in (-partition 2 away-goal-scorers)
-						       collect (format "%s %s" (-first-item g) (-last-item g)))
-					    ""))
-	     (max-goals-by-a-side (max home-goals away-goals))
-	     score-card)
-	(when (< home-goals max-goals-by-a-side)
-	  (setq home-scorecard-strings-list (-concat home-scorecard-strings-list (make-list (- max-goals-by-a-side home-goals) ""))))
-	(when (< away-goals max-goals-by-a-side)
-	  (setq away-scorecard-strings-list (-concat away-scorecard-strings-list (make-list (- max-goals-by-a-side away-goals) ""))))
-	`(("home-goals" . ,home-goals)
+	     (home-scorecard-strings-list (-partition 2 home-goal-scorers))
+	     (away-scorecard-strings-list (-partition 2 away-goal-scorers)))
+	`(("title" . ,title)
+	  ("home-goals" . ,home-goals)
 	  ("away-goals" . ,away-goals)
 	  ("home-scorecard-list" . ,home-scorecard-strings-list)
 	  ("away-scorecard-list" . ,away-scorecard-strings-list))))))
+
+(defun soccer--all-clubs ()
+  "Get all club names."
+  (-flatten (cl-loop for leagues in (soccer--league-names)
+		     collect (mapcar 'car (cdr (assoc leagues soccer-leagues--leagues-alist))))))
+
+(defun soccer-scorecard (date home away)
+  "Get the socrecard for a match between HOME and AWAY on a DATE.  Enter DATE in YYYY-MM-DD format if entering it manually.  If the input is from `org-read-date' calendar popup then it is in YYYY-MM-DD format by default."
+  (interactive
+   (list (org-read-date nil nil nil "Date of the match: ") (completing-read "home club/nation: " (soccer--all-clubs)) (completing-read "away club/nation: " (soccer--all-clubs))))
+  (let* ((day-moth-year (soccer-time--get-day-month-year-number-from-date date "-" 2 1 0))
+	 (dd (-first-item day-moth-year))
+	 (mm (-second-item day-moth-year))
+	 (yyyy (-third-item day-moth-year))
+	 (new-date (format "%02d-%02d-%04d" dd mm yyyy))
+	 (scorecard-alist  (soccer--get-scorecard-alist new-date home away))
+	 (title (cdr (assoc "title" scorecard-alist))))
+    (if title
+	(let* ((home-goals (cdr (assoc "home-goals" scorecard-alist)))
+	       (away-goals (cdr (assoc "away-goals" scorecard-alist)))
+	       (home-scorecard-list (cdr (assoc "home-scorecard-list" scorecard-alist)))
+	       (away-scorecard-list (cdr (assoc "away-scorecard-list" scorecard-alist)))
+	       (home-scorecard (format "%s %s: %s" home home-goals (string-join (cl-loop for g in home-scorecard-list
+											 collect (format "%s(%s)" (-second-item g) (-first-item g))) " ")))
+	       (away-scorecard (format "%s %s: %s" away away-goals (string-join (cl-loop for g in away-scorecard-list
+										   collect (format "%s(%s)" (-second-item g) (-first-item g))) " "))))
+	  (message (format "%s\n%s" home-scorecard away-scorecard)))
+      (message "Result not found. Probably entered wrong date/name?"))))
 
 (provide 'soccer)
 ;;; soccer.el ends here
