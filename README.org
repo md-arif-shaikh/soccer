@@ -5,7 +5,7 @@
 #+html: <div> <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/md-arif-shaikh/soccer"> <img alt="GitHub" src="https://img.shields.io/github/license/md-arif-shaikh/soccer"> <a href="https://melpa.org/#/soccer"><img alt="MELPA" src="https://melpa.org/packages/soccer-badge.svg"/></a>  <a href="https://stable.melpa.org/#/soccer"><img alt="MELPA Stable" src="https://stable.melpa.org/packages/soccer-badge.svg"/></a></div>
 
 * About the package
-  ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results, standing table for soccer (football) matches inside emacs. Currently it works for
+  ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results, standing table, scorecard etc for soccer (football) matches inside emacs. Currently it works for
   - Premier League (England)
   - La Liga (Spain)
   - Ligue 1 (France)
@@ -23,16 +23,17 @@
 * Common interactive functions
   Call these using ~M-x Function~ where ~Function~ is any of the following functions
 
-  | Functions                    | Actions                          |
-  | ~soccer-fixtures-next~         | Fixture for the Next match       |
-  | ~soccer-fixtures-next-5~       | Fixtures of the Next 5 matches   |
-  | ~soccer-fixtures-full-in-org~  | Full fixtures saved in org file  |
-  | ~soccer-results-last~          | Result of the last match         |
-  | ~soccer-results-last-5~        | Results of the last 5 matches    |
-  | ~soccer-results-full-in-org~   | Full list of results in org file |
-  | ~soccer-table~                 | Full Ranking table               |
-  | ~soccer-table-top-4~           | Rank table with top 4 teams      |
-  | ~soccer-table-bottom-4~        | Rank table with bottom 4 teams   |
+  | Functions                   | Actions                          |
+  | ~soccer-fixtures-next~        | Fixture for the Next match       |
+  | ~soccer-fixtures-next-5~      | Fixtures of the Next 5 matches   |
+  | ~soccer-fixtures-full-in-org~ | Full fixtures saved in org file  |
+  | ~soccer-results-last~         | Result of the last match         |
+  | ~soccer-results-last-5~       | Results of the last 5 matches    |
+  | ~soccer-results-full-in-org~  | Full list of results in org file |
+  | ~soccer-table~                | Full Ranking table               |
+  | ~soccer-table-top-4~          | Rank table with top 4 teams      |
+  | ~soccer-table-bottom-4~       | Rank table with bottom 4 teams   |
+  | ~soccer-scorecard~            | Scorecard                        |
 * Screenshots
   - ~soccer-fixtures-next-5~
     #+html: <div> <img src="./screenshots/soccer-fixtures-next-5.png"> </div>
