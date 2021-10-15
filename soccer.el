@@ -46,9 +46,11 @@
 ;; soccer-fixtures-next	Fixture for the Next match
 ;; soccer-fixtures-next-5	Fixtures of the Next 5 matches
 ;; soccer-fixtures-full-in-org	Full fixtures saved in org file
+;; soccer-fixtures-all-clubs    Fixtures for all clubs in a league
 ;; soccer-results-last	        Result of the last match
 ;; soccer-results-last-5	Results of the last 5 matches
 ;; soccer-results-full-in-org	Full list of results in org file
+;; soccer-results-all-clubs     Results for all clubs in a league
 ;; soccer-table                 Full Ranking table
 ;; soccer-table-top-4           Ranking table with top 4 teams
 ;; soccer-table-bottom-4        Ranking table with bottom 4 teams
@@ -134,8 +136,8 @@
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
 	     (dates-dom (dom-by-class dom "kick_t_dt"))
 	     (times-dom (dom-by-class dom "kick_t_ko"))
-	     (homes-dom (dom-by-class dom "home_o"))
-	     (aways-dom (dom-by-class dom "away_o"))
+	     (homes-dom (or (dom-by-class dom "home_o") (dom-by-class dom "home uc")))
+	     (aways-dom (or (dom-by-class dom "away_o") (dom-by-class dom "away uc")))
 	     (source-time-utc-offset (soccer--get-source-utc-offset dom))
 	     results-dom
 	     (number-of-results (length dates-dom))
@@ -373,6 +375,12 @@
      (list league-name club-name)))
   (soccer--get-league-data league club "fixtures" 1))
 
+(defun soccer-fixtures-all-clubs (league)
+  "The next matches in a LEAGUE."
+  (interactive
+   (list (completing-read "league: " (soccer--league-names))))
+  (soccer--get-league-data league "All" "fixtures" 10))
+
 (defun soccer-fixtures-next-5 (league club)
   "The next 5 matches in fixtures of CLUB of LEAGUE."
   (interactive
@@ -405,6 +413,12 @@
 	  (club-name (completing-read "club: " (mapcar 'car (cdr (assoc league-name soccer-leagues--leagues-alist))))))
      (list league-name club-name)))
   (soccer--get-league-data league club "results" 5))
+
+(defun soccer-results-all-clubs (league)
+  "All the latest results in a LEAGUE."
+  (interactive
+   (list (completing-read "league: " (soccer--league-names))))
+  (soccer--get-league-data league "All" "results" 10))
 
 ;; score card
 (defun soccer--get-scorecard-alist (date home away)

@@ -56,7 +56,8 @@
 				  ("Westbrom" . "https://www.scorespro.com/soccer/england/teams/west-bromwich-MjQ1NA==/")
 				  ("Fulham" . "https://www.scorespro.com/soccer/england/teams/fulham-fc-MjQyMg==/")
 				  ("Burnley" . "https://www.scorespro.com/soccer/england/teams/burnley-fc-MTA4MzQ=/")
-				  ("Table" . "https://www.scorespro.com/soccer/england/premier-league/standings/")))
+				  ("Table" . "https://www.scorespro.com/soccer/england/premier-league/standings/")
+				  ("All" . "https://www.scorespro.com/soccer/england/premier-league/")))
     ("Spain: La Liga" . (("Real Madrid" . "https://www.scorespro.com/soccer/spain/teams/real-madrid-NDE4MA==/")
 			 ("Barcelona". "https://www.scorespro.com/soccer/spain/teams/fc-barcelona-MTc3NjI=/")
 			 ("Atletico Madrid". "https://www.scorespro.com/soccer/spain/teams/atletico-madrid-MTgwNjM=/")
@@ -77,7 +78,8 @@
 			 ("Sevilla" . "https://www.scorespro.com/soccer/spain/teams/sevilla-MjYyNTM=/")
 			 ("Valencia" . "https://www.scorespro.com/soccer/spain/teams/valencia-MTgwMzc=/")
 			 ("Villarreal" . "https://www.scorespro.com/soccer/spain/teams/villarreal-MTc4NDI=/")
-			 ("Table" . "https://www.scorespro.com/soccer/spain/laliga/standings/")))
+			 ("Table" . "https://www.scorespro.com/soccer/spain/laliga/standings/")
+			 ("All" . "https://www.scorespro.com/soccer/spain/laliga/")))
     ("France: Ligue 1" . (("Paris Saint Germain" . "https://www.scorespro.com/soccer/france/teams/paris-saint-germain-MzI5NQ==/")
 			  ("Lyon" . "https://www.scorespro.com/soccer/france/teams/lyon-MzI4OA==/")
 			  ("Angers" . "https://www.scorespro.com/soccer/france/teams/angers-MTU0NTQ=/")
@@ -98,7 +100,8 @@
 			  ("Saint Etienne" . "https://www.scorespro.com/soccer/france/teams/as-saint-etienne-MTU0NDk=/")
 			  ("Stade Brestois 29" . "https://www.scorespro.com/soccer/france/teams/stade-brestois-29-MjM5MTI=/")
 			  ("Strasbourg" . "https://www.scorespro.com/soccer/france/teams/strasbourg-MjIxOTU=/")
-			  ("Table" . "https://www.scorespro.com/soccer/france/ligue-1/standings/"))))
+			  ("Table" . "https://www.scorespro.com/soccer/france/ligue-1/standings/")
+			  ("All" . "https://www.scorespro.com/soccer/france/ligue-1/"))))
   "Alist of soccer league data."
   ;; Specifying the table is a little klunky.  We want one table per
   ;; league.
