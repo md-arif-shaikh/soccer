@@ -8,12 +8,12 @@
 - [[#installation-and-configuration][Installation and configuration]]
 - [[#common-interactive-functions][Common interactive functions]]
 - [[#screenshots][Screenshots]]
-  - [[#soccer-fixtures-next-5][~soccer-fixtures-next-5~]]
-  - [[#soccer-results-last-5][~soccer-results-last-5~]]
-  - [[#soccer-table-top-4][~soccer-table-top-4~]]
-  - [[#soccer-table-bottom-4][~soccer-table-bottom-4~]]
-  - [[#soccer-table][~soccer-table~]]
-  - [[#soccer-scorecard][~soccer-scorecard~]]
+  - [[#soccer-fixtures-next-5][soccer-fixtures-next-5]]
+  - [[#soccer-results-last-5][soccer-results-last-5]]
+  - [[#soccer-table-top-4][soccer-table-top-4]]
+  - [[#soccer-table-bottom-4][soccer-table-bottom-4]]
+  - [[#soccer-table][soccer-table]]
+  - [[#soccer-scorecard][soccer-scorecard]]
 
 * About the package
   ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results, standing table, scorecard etc for soccer (football) matches inside emacs. Currently it works for
@@ -41,7 +41,7 @@
 	     ("C-c s r" . soccer-results-last)
 	     ("C-c s s" . soccer-scorecard)))
   #+END_SRC
-  This will fetch and install the package from `Melpa`, set your local `utc-offset` and set the above keybindings.
+  This will fetch and install the package from ~Melpa~, set your local ~utc-offset~ and set the above keybindings.
 * Common interactive functions
   Call these using ~M-x Function~ where ~Function~ is any of the following functions
 
@@ -59,15 +59,15 @@
   | ~soccer-table-bottom-4~       | Rank table with bottom 4 teams     |
   | ~soccer-scorecard~            | Scorecard                          |
 * Screenshots
-** ~soccer-fixtures-next-5~
+** soccer-fixtures-next-5
     #+html: <div> <img src="./screenshots/soccer-fixtures-next-5.png"> </div>
-** ~soccer-results-last-5~
+** soccer-results-last-5
     #+html: <div> <img src="./screenshots/soccer-results-last-5.png"> </div>
-** ~soccer-table-top-4~
+** soccer-table-top-4
     #+html: <div> <img src="./screenshots/soccer-table-top-4.png"></div>
-** ~soccer-table-bottom-4~
+** soccer-table-bottom-4
     #+html: <div> <img src="./screenshots/soccer-table-bottom-4.png"></div>
-** ~soccer-table~
+** soccer-table
     #+html: <div> <img src="./screenshots/soccer-table.png"></div>
-** ~soccer-scorecard~
+** soccer-scorecard
    #+html: <div> <img src="./screenshots/soccer-scorecard.png"></div>
