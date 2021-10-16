@@ -433,11 +433,14 @@
 	     (away-goals (/ (length away-goal-scorers) 2))
 	     (home-scorecard-strings-list (-partition 2 home-goal-scorers))
 	     (away-scorecard-strings-list (-partition 2 away-goal-scorers)))
-	`(("title" . ,title)
-	  ("home-goals" . ,home-goals)
-	  ("away-goals" . ,away-goals)
-	  ("home-scorecard-list" . ,home-scorecard-strings-list)
-	  ("away-scorecard-list" . ,away-scorecard-strings-list))))))
+	(when title
+	  `(("title" . ,title)
+	    ("home" . ,home)
+	    ("away" . ,away)
+	    ("home-goals" . ,home-goals)
+	    ("away-goals" . ,away-goals)
+	    ("home-scorecard-list" . ,home-scorecard-strings-list)
+	    ("away-scorecard-list" . ,away-scorecard-strings-list)))))))
 
 (defun soccer--all-clubs ()
   "Get all club names."
@@ -447,25 +450,31 @@
 (defun soccer-scorecard (date home away)
   "Get the socrecard for a match between HOME and AWAY on a DATE.  Enter DATE in YYYY-MM-DD format if entering it manually.  If the input is from `org-read-date' calendar popup then it is in YYYY-MM-DD format by default."
   (interactive
-   (list (org-read-date nil nil nil "Date of the match: ") (completing-read "home club/nation: " (soccer--all-clubs)) (completing-read "away club/nation: " (soccer--all-clubs))))
+   (list (org-read-date nil nil nil "Date of the match: ") (completing-read "home/away club/nation: " (soccer--all-clubs)) (completing-read "away/home club/nation: " (soccer--all-clubs))))
   (let* ((day-moth-year (soccer-time--get-day-month-year-number-from-date date "-" 2 1 0))
 	 (dd (-first-item day-moth-year))
 	 (mm (-second-item day-moth-year))
 	 (yyyy (-third-item day-moth-year))
 	 (new-date (format "%02d-%02d-%04d" dd mm yyyy))
-	 (scorecard-alist  (soccer--get-scorecard-alist new-date home away))
+	 (scorecard-alist  (or (soccer--get-scorecard-alist new-date home away) (soccer--get-scorecard-alist new-date away home)))
 	 (title (cdr (assoc "title" scorecard-alist))))
     (if title
 	(let* ((home-goals (cdr (assoc "home-goals" scorecard-alist)))
 	       (away-goals (cdr (assoc "away-goals" scorecard-alist)))
+	       (home-team (cdr (assoc "home" scorecard-alist)))
+	       (away-team (cdr (assoc "away" scorecard-alist)))
 	       (home-scorecard-list (cdr (assoc "home-scorecard-list" scorecard-alist)))
 	       (away-scorecard-list (cdr (assoc "away-scorecard-list" scorecard-alist)))
-	       (home-scorecard (format "%s %s: %s" home home-goals (string-join (cl-loop for g in home-scorecard-list
-											 collect (format "%s(%s)" (-second-item g) (-first-item g))) " ")))
-	       (away-scorecard (format "%s %s: %s" away away-goals (string-join (cl-loop for g in away-scorecard-list
-										   collect (format "%s(%s)" (-second-item g) (-first-item g))) " "))))
-	  (message (format "%s\n%s" home-scorecard away-scorecard)))
-      (message "Result not found. Probably entered wrong date/name?"))))
+	       (home-scorecard (format "%-20s %s: %s" home-team home-goals (string-join (cl-loop for g in home-scorecard-list
+											 collect (format "%s(%s)" (-second-item g) (-first-item g))) ", ")))
+	       (away-scorecard (format "%-20s %s: %s" away-team away-goals (string-join (cl-loop for g in away-scorecard-list
+										   collect (format "%s(%s)" (-first-item g) (-second-item g))) ", "))))
+	  (message (format "%s\n%s" (propertize home-scorecard 'face (cond ((> home-goals away-goals) 'soccer-face-win)
+									   ((= home-goals away-goals) 'soccer-face-draw)
+									   ((< home-goals away-goals) 'soccer-face-loss))) (propertize away-scorecard 'face (cond ((> home-goals away-goals) 'soccer-face-loss)
+																				  ((= home-goals away-goals) 'soccer-face-draw)
+																				  ((< home-goals away-goals) 'soccer-face-win))))))
+      (message "Result not found. Probably entered wrong date/name?\nTry `soccer-fixtures-next` to get the correct match info."))))
 
 (provide 'soccer)
 ;;; soccer.el ends here

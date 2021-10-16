@@ -3,6 +3,17 @@
 #+EMAIL: arifshaikh.astro@gmail.com
 
 #+html: <div> <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/md-arif-shaikh/soccer"> <img alt="GitHub" src="https://img.shields.io/github/license/md-arif-shaikh/soccer"> <a href="https://melpa.org/#/soccer"><img alt="MELPA" src="https://melpa.org/packages/soccer-badge.svg"/></a>  <a href="https://stable.melpa.org/#/soccer"><img alt="MELPA Stable" src="https://stable.melpa.org/packages/soccer-badge.svg"/></a></div>
+* Table of contents :TOC:
+- [[#about-the-package][About the package]]
+- [[#installation-and-configuration][Installation and configuration]]
+- [[#common-interactive-functions][Common interactive functions]]
+- [[#screenshots][Screenshots]]
+  - [[#soccer-fixtures-next-5][~soccer-fixtures-next-5~]]
+  - [[#soccer-results-last-5][~soccer-results-last-5~]]
+  - [[#soccer-table-top-4][~soccer-table-top-4~]]
+  - [[#soccer-table-bottom-4][~soccer-table-bottom-4~]]
+  - [[#soccer-table][~soccer-table~]]
+  - [[#soccer-scorecard][~soccer-scorecard~]]
 
 * About the package
   ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results, standing table, scorecard etc for soccer (football) matches inside emacs. Currently it works for
@@ -10,7 +21,7 @@
   - La Liga (Spain)
   - Ligue 1 (France)
   But could be easily extended to add other leagues around the world. All data are fetched from ~scorespro~ website.
-* Installation
+* Installation and configuration
   It's available in [[https://melpa.org/#/][Melpa]]. Look [[https://melpa.org/#/getting-started][here]] for instruction for installation. One can also install it using ~straight~ and ~use-package~
   #+BEGIN_SRC emacs-lisp
     (use-package soccer
@@ -20,6 +31,17 @@
   #+BEGIN_SRC emacs-lisp
     (setq soccer-time-local-time-utc-offset "+0530")
   #+END_SRC
+  Additionally use may want to make some keybindings to call the interactive functions conveniently. For example, your full configuration could be something like bellow,
+  #+BEGIN_SRC emacs-lisp
+    (use-package soccer
+      :straight t
+      :config
+      (setq soccer-time-local-time-utc-offset "+0530")
+      :bind (("C-c s f" . soccer-fixtures-next)
+	     ("C-c s r" . soccer-results-last)
+	     ("C-c s s" . soccer-scorecard)))
+  #+END_SRC
+  This will fetch and install the package from `Melpa`, set your local `utc-offset` and set the above keybindings.
 * Common interactive functions
   Call these using ~M-x Function~ where ~Function~ is any of the following functions
 
@@ -37,13 +59,15 @@
   | ~soccer-table-bottom-4~       | Rank table with bottom 4 teams     |
   | ~soccer-scorecard~            | Scorecard                          |
 * Screenshots
-  - ~soccer-fixtures-next-5~
+** ~soccer-fixtures-next-5~
     #+html: <div> <img src="./screenshots/soccer-fixtures-next-5.png"> </div>
-  - ~soccer-results-last-5~
+** ~soccer-results-last-5~
     #+html: <div> <img src="./screenshots/soccer-results-last-5.png"> </div>
-  - ~soccer-table-top-4~
+** ~soccer-table-top-4~
     #+html: <div> <img src="./screenshots/soccer-table-top-4.png"></div>
-  - ~soccer-table-bottom-4~
+** ~soccer-table-bottom-4~
     #+html: <div> <img src="./screenshots/soccer-table-bottom-4.png"></div>
-  - ~soccer-table~
+** ~soccer-table~
     #+html: <div> <img src="./screenshots/soccer-table.png"></div>
+** ~soccer-scorecard~
+   #+html: <div> <img src="./screenshots/soccer-scorecard.png"></div>
