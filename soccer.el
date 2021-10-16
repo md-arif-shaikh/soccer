@@ -131,7 +131,7 @@
 
 (defun soccer--get-league-data-alist (league club data-type)
   "Get data for DATA-TYPE for a CLUB of a LEAGUE."
-  (let* ((url (concat (soccer--get-league-url league club) (format "/%s/" data-type))))
+  (let* ((url (concat (soccer--get-league-url league club) (format "%s/" data-type))))
     (with-current-buffer (url-retrieve-synchronously url)
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
 	     (dates-dom (dom-by-class dom "kick_t_dt"))

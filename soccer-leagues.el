@@ -4,9 +4,9 @@
 
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
-;; Package-Requires: ((emacs "24.1"))
+;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: games
-;; Version: 1.0.0
+;; Version: 1.1.0
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -31,10 +31,22 @@
 
 ;;; Code:
 
+(require 'dom)
+
+(defun soccer-leagues--get-club-names-and-urls (country league)
+  "Get the team names and the corresponding urls for a LEAGUE in a COUNTRY."
+  (let* ((url (string-replace " " "-" (format "https://www.scorespro.com/soccer/%s/%s/teams/" (downcase country) (downcase league)))))
+    (with-current-buffer (url-retrieve-synchronously url)
+      (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
+	     (data-dom (dom-by-class dom "team st-br uc"))
+	     (url-list (cl-loop for d in data-dom
+				collect (cons (car (dom-strings (dom-by-tag d 'a))) (concat "https://www.scorespro.com" (dom-attr (dom-by-tag d 'a) 'href))))))
+        url-list))))
+
 (defgroup soccer-leagues nil "Customization group for soccer leagues.")
 
 (defcustom soccer-leagues--leagues-alist
-  '(("England: Premier League" . (("Manchester United" . "https://www.scorespro.com/soccer/england/teams/manchester-united-MjQyNw==/")
+  `(("England: Premier League" . (("Manchester United" . "https://www.scorespro.com/soccer/england/teams/manchester-united-MjQyNw==/")
 				  ("Liverpool" . "https://www.scorespro.com/soccer/england/teams/liverpool-fc-MTA5OTE=/")
 				  ("Chelsea" . "https://www.scorespro.com/soccer/england/teams/chelsea-fc-MjQyMA==/")
 				  ("Manchester City" . "https://www.scorespro.com/soccer/england/teams/manchester-city-MTE2NzY=/")
@@ -101,7 +113,10 @@
 			  ("Stade Brestois 29" . "https://www.scorespro.com/soccer/france/teams/stade-brestois-29-MjM5MTI=/")
 			  ("Strasbourg" . "https://www.scorespro.com/soccer/france/teams/strasbourg-MjIxOTU=/")
 			  ("Table" . "https://www.scorespro.com/soccer/france/ligue-1/standings/")
-			  ("All" . "https://www.scorespro.com/soccer/france/ligue-1/"))))
+			  ("All" . "https://www.scorespro.com/soccer/france/ligue-1/")))
+    ("Italy: Serie A" . ,(soccer-leagues--get-club-names-and-urls "Italy" "Serie A"))
+    ("Germany: Bundesliga" . ,(soccer-leagues--get-club-names-and-urls "Germany" "Bundesliga"))
+    ("England: Championship" . ,(soccer-leagues--get-club-names-and-urls "England" "Championship")))
   "Alist of soccer league data."
   ;; Specifying the table is a little klunky.  We want one table per
   ;; league.
