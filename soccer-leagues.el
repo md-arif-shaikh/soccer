@@ -61,16 +61,20 @@
 		       (string :tag "CLUB")))
   :group 'soccer-leagues)
 
+(defun soccer-leagues--get-league-alist ()
+  "Get soccer league alist."
+  (let* ((country-list (mapcar 'car soccer-leagues-alist))
+	 (league-list (mapcar 'cdr soccer-leagues-alist)))
+    (cl-loop for n from 0 to (1- (length country-list))
+	     collect (let* ((country (nth n country-list))
+			    (league (nth n league-list))
+			    (name (format "%s: %s" country league))
+			    (urls (soccer-leagues--get-club-names-and-urls country league)))
+		       (cons name urls)))))
+
 (defvar soccer-leagues--leagues-alist)
-(setq soccer-leagues--leagues-alist
-      (let* ((country-list (mapcar 'car soccer-leagues-alist))
-	     (league-list (mapcar 'cdr soccer-leagues-alist)))
-	(cl-loop for n from 0 to (1- (length country-list))
-		 collect (let* ((country (nth n country-list))
-				(league (nth n league-list))
-				(name (format "%s: %s" country league))
-				(urls (soccer-leagues--get-club-names-and-urls country league)))
-			   (cons name urls)))))
+(setq soccer-leagues--leagues-alist (soccer-leagues--get-league-alist))
+
 
 (provide 'soccer-leagues)
 
