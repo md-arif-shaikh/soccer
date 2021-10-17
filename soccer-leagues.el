@@ -61,7 +61,7 @@
 		       (string :tag "CLUB")))
   :group 'soccer-leagues)
 
-(defun soccer-leagues--get-league-alist ()
+(defun soccer-leagues--get-leagues-alist ()
   "Get soccer league alist."
   (let* ((country-list (mapcar 'car soccer-leagues-alist))
 	 (league-list (mapcar 'cdr soccer-leagues-alist)))
@@ -73,8 +73,7 @@
 		       (cons name urls)))))
 
 (defvar soccer-leagues--leagues-alist)
-(setq soccer-leagues--leagues-alist (soccer-leagues--get-league-alist))
-
+(setq soccer-leagues--leagues-alist (soccer-leagues--get-leagues-alist))
 
 (provide 'soccer-leagues)
 
