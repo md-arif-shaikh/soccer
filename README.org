@@ -26,7 +26,7 @@
   - Championship (England)
   and Adding new leagues or removing one from the default list is really easy, see [[#adding-new-leagues][Adding new leagues]]. All data are fetched from ~scorespro~ website.
 * Installation and configuration
-  It's available in [[https://melpa.org/#/][Melpa]]. Look [[https://melpa.org/#/getting-started][here]] for instruction for installation. One can also install it using ~straight~ and ~use-package~
+  It's available in [[https://melpa.org/#/][Melpa]]. Look [[https://melpa.org/#/getting-started][here]] for instruction. One can also install it using ~straight~ and ~use-package~
   #+BEGIN_SRC emacs-lisp
     (use-package soccer
       :straight (soccer :type git :host github :repo "md-arif-shaikh/soccer"))
@@ -43,7 +43,8 @@
       (setq soccer-time-local-time-utc-offset "+0530")
       :bind (("C-c s f" . soccer-fixtures-next)
 	     ("C-c s r" . soccer-results-last)
-	     ("C-c s s" . soccer-scorecard)))
+	     ("C-c s s" . soccer-scorecard)
+	     ("C-c s t" . soccer-table)))
   #+END_SRC
   This will fetch and install the package from ~Melpa~, set your local ~utc-offset~ and set the above keybindings.
 * Adding new leagues

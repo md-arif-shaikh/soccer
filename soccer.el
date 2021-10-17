@@ -5,7 +5,7 @@
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
 ;; Package-Requires: ((emacs "26.1") (dash "2.19.1"))
-;; Version: 1.1.0
+;; Version: 1.2.0
 ;; Keywords: games, soccer, football
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -119,10 +119,18 @@
   "Extract league names from `soccer-leagues--leagues-alist'."
   (mapcar 'car soccer-leagues--leagues-alist))
 
+(defun soccer--get-country-league-names (league)
+  "Get the country and league names from LEAGUE string."
+  (let* ((country-league-strings (split-string league ":" t " ")))
+    (list (string-replace " " "-" (downcase (-first-item country-league-strings))) (string-replace " " "-" (downcase (-second-item country-league-strings))))))
+
 (defun soccer--get-league-url (league club)
   "Get the url for a CLUB of LEAGUE."
-(cdr (assoc club (cdr (assoc league soccer-leagues--leagues-alist)))))
-
+  (cond ((equal club "All") (let* ((country-league-names (soccer--get-country-league-names league)))
+			      (format "https://www.scorespro.com/soccer/%s/%s/" (-first-item country-league-names) (-second-item country-league-names))))
+	((equal club "Table") (let* ((country-league-names (soccer--get-country-league-names league)))
+				(format "https://www.scorespro.com/soccer/%s/%s/standings/" (-first-item country-league-names) (-second-item country-league-names))))
+	(t (cdr (assoc club (cdr (assoc league soccer-leagues--leagues-alist)))))))
 
 (defun soccer--get-source-utc-offset (dom)
   "Get the source utc offset from the DOM."
