@@ -122,7 +122,7 @@
 (defun soccer--get-country-league-names (league)
   "Get the country and league names from LEAGUE string."
   (let* ((country-league-strings (split-string league ":" t " ")))
-    (list (string-replace " " "-" (downcase (-first-item country-league-strings))) (string-replace " " "-" (downcase (-second-item country-league-strings))))))
+    (list (replace-regexp-in-string " " "-" (downcase (-first-item country-league-strings))) (replace-regexp-in-string " " "-" (downcase (-second-item country-league-strings))))))
 
 (defun soccer--get-league-url (league club)
   "Get the url for a CLUB of LEAGUE."
@@ -431,7 +431,7 @@
 ;; score card
 (defun soccer--get-scorecard-alist (date home away)
   "Get the live scorecard for a match between HOME and AWAY on DATE.  DATE should in the format DD-MM-YYYY."
-  (let* ((live-match-url (downcase (string-replace " " "-" (concat "https://www.scorespro.com/soccer/livescore/" home "-vs-" away "/" date "/")))))
+  (let* ((live-match-url (downcase (replace-regexp-in-string " " "-" (concat "https://www.scorespro.com/soccer/livescore/" home "-vs-" away "/" date "/")))))
     (with-current-buffer (url-retrieve-synchronously live-match-url)
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
 	     (title (dom-strings (dom-by-tag dom 'title)))

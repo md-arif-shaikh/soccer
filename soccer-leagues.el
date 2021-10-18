@@ -35,7 +35,7 @@
 
 (defun soccer-leagues--get-club-names-and-urls (country league)
   "Get the team names and the corresponding urls for a LEAGUE in a COUNTRY."
-  (let* ((url (string-replace " " "-" (format "https://www.scorespro.com/soccer/%s/%s/teams/" (downcase country) (downcase league)))))
+  (let* ((url (replace-regexp-in-string " " "-" (format "https://www.scorespro.com/soccer/%s/%s/teams/" (downcase country) (downcase league)))))
     (with-current-buffer (url-retrieve-synchronously url)
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
 	     (data-dom (dom-by-class dom "team st-br uc"))
@@ -78,4 +78,3 @@
 (provide 'soccer-leagues)
 
 ;;; soccer-leagues.el ends here
-
