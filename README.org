@@ -28,7 +28,7 @@
   - Bundesliga (Germany)
   - Serie A (Italy)
   - Championship (England)
-  and Adding new leagues or removing one from the default list is really easy, see [[##adding-new-leagues][Adding new leagues]]. All data are fetched from ~scorespro~ website.
+  and Adding new leagues or removing one from the default list is really easy, see [[#adding-new-leagues][Adding new leagues]]. All data are fetched from ~scorespro~ website.
 * Installation and configuration
 ** Install
 It's available in [[https://melpa.org/#/][Melpa]]. Look [[https://melpa.org/#/getting-started][here]] for instruction. One can also install it using ~straight~ and ~use-package~
