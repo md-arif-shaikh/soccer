@@ -114,4 +114,7 @@ Additionally you may want to make some keybindings to call the interactive funct
 ** soccer-table
     #+html: <div> <img src="./screenshots/soccer-table.png"></div>
 ** soccer-scorecard
-   #+html: <div> <img src="./screenshots/soccer-scorecard.png"></div>
+   #+html: <div> <img src="./screenshots/scorecard-1.png"></div>
+   #+html: <div> <img src="./screenshots/scorecard-2.png"></div>
+   #+html: <div> <img src="./screenshots/scorecard-3.png"></div>
+   #+html: <div> <img src="./screenshots/scorecard-4.png"></div>

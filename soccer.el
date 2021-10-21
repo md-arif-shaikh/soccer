@@ -202,7 +202,12 @@
 	 (hours-remain (nth 1 time-till-kickoff-list))
 	 (mins-remain (nth 2 time-till-kickoff-list))
 	 time-till-kickoff-string)
-    (setq time-till-kickoff-string (format "--> Starts in %s %s %s" (if (> days-remain 0) (format "%s days" days-remain) "") (if (> hours-remain 0) (format "%s hours" hours-remain) "") (if (> mins-remain 0) (format "%s mins" mins-remain) "")))
+    (setq time-till-kickoff-string (format "⟶ %s %s %s"
+					   (if (> days-remain 0) (format "%s days" days-remain) "")
+					   (if (> hours-remain 0) (format "%s hours" hours-remain) "")
+					   (cond ((> mins-remain 0) (format "%s mins to start" mins-remain))
+						 ((and (< mins-remain 0) (> mins-remain (- 95))) "match is live now.")
+						 (t "match has finished"))))
     (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s - %s %s" date time match-year-local match-month-local (format "%02d" match-day-num-local) match-day-local (format "%02d" local-hour) (format "%02d" local-min) local-A/P (propertize home 'face 'soccer-face-fixtures) (propertize away 'face 'soccer-face-fixtures) (propertize time-till-kickoff-string 'face 'soccer-face-time-to-kickoff))))
 
 (defun soccer--get-league-data-results-stings (dates times homes aways results source-time-utc-offset n)
