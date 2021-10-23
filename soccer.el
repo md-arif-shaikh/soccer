@@ -74,6 +74,8 @@
   "Color to indicate a fixture.")
 (defvar soccer-color--time-to-kickoff "#E5C07B"
   "Color to indicate time to kickoff.")
+(defvar soccer-color--scorecard-header "#E5C07B"
+  "Color for scorecard title.")
 
 (defface soccer-face-win
   `((t :foreground ,soccer-color--win
@@ -113,6 +115,14 @@
        :box nil
        :underline nil))
   "Face for time to kickoff."
+  :group 'soccer-face)
+
+(defface soccer-face-scorecard-header
+  `((t :foreground ,soccer-color--scorecard-header
+       :weight extra-bold
+       :box nil
+       :underline t))
+  "Face for soccer scorecard title"
   :group 'soccer-face)
 
 (defun soccer--league-names ()
@@ -192,7 +202,12 @@
 	 (hours-remain (nth 1 time-till-kickoff-list))
 	 (mins-remain (nth 2 time-till-kickoff-list))
 	 time-till-kickoff-string)
-    (setq time-till-kickoff-string (format "--> Starts in %s %s %s" (if (> days-remain 0) (format "%s days" days-remain) "") (if (> hours-remain 0) (format "%s hours" hours-remain) "") (if (> mins-remain 0) (format "%s mins" mins-remain) "")))
+    (setq time-till-kickoff-string (format "⟶ %s %s %s"
+					   (if (> days-remain 0) (format "%s days" days-remain) "")
+					   (if (> hours-remain 0) (format "%s hours" hours-remain) "")
+					   (cond ((> mins-remain 0) (format "%s mins to start" mins-remain))
+						 ((and (< mins-remain 0) (> mins-remain (- 95))) "match is live now.")
+						 (t "match has finished"))))
     (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s - %s %s" date time match-year-local match-month-local (format "%02d" match-day-num-local) match-day-local (format "%02d" local-hour) (format "%02d" local-min) local-A/P (propertize home 'face 'soccer-face-fixtures) (propertize away 'face 'soccer-face-fixtures) (propertize time-till-kickoff-string 'face 'soccer-face-time-to-kickoff))))
 
 (defun soccer--get-league-data-results-stings (dates times homes aways results source-time-utc-offset n)
@@ -290,6 +305,8 @@
 	     goal-for
 	     goal-against
 	     current-form-list)
+	(setq teams-full-name (cl-loop for result in results-strings-list
+				       collect (nth 1 result)))
 	(setq teams (cl-loop for result in results-strings-list
 			     collect (nth 2 result)))
 	(setq played (cl-loop for result in results-strings-list
@@ -303,8 +320,9 @@
 	(setq goal-against (cl-loop for result in results-strings-list
 				    collect (nth 2 (split-string (nth 7 result)))))
 	(setq current-form-list (cl-loop for result in results-strings-list
-				    collect (-take-last 5 result)))
-        `(("teams" . ,teams)
+					 collect (-take-last 5 result)))
+        `(("teams-full-name" . ,teams-full-name)
+	  ("teams" . ,teams)
 	  ("played" . ,played)
 	  ("wins" . ,wins)
 	  ("losses" . ,losses)
@@ -315,6 +333,7 @@
 (defun soccer--table-data (league num top/bottom)
   "Get table for LEAGUE with TOP/BOTTOM NUM teams."
   (let* ((data-alist (soccer--get-league-table-data-alist league))
+	 (team-names (cdr (assoc "teams-full-name" data-alist)))
 	 (teams (cdr (assoc "teams" data-alist)))
 	 (played (cdr (assoc "played" data-alist)))
 	 (wins (cdr (assoc "wins" data-alist)))
@@ -325,10 +344,11 @@
 	 (num-result (min num (length teams)))
 	 (start (if (string-equal top/bottom "top") 0 (- (length teams) num-result)))
 	 (stop (if (string-equal top/bottom "top") (1- num-result) (1- (length teams))))
-	 (header-string "Rank Team Played Won Lost Drawn  GF  GA  GD  Points  Form")
+	 (header-string (format "Rank Team %-20s Played Won Lost Drawn  GF  GA  GD  Points  Form" "Name"))
 	 table-string)
     (setq table-string (cl-loop for n from start to stop
 				collect (let ((team (nth n teams))
+					      (team-name (nth n team-names))
 					      (matches (nth n played))
 					      (win (string-to-number (nth n wins)))
 					      (loss (string-to-number (nth n losses)))
@@ -342,7 +362,7 @@
 										  collect (cond ((string-equal form-string "W") (propertize form-string 'face 'soccer-face-win))
 												((string-equal form-string "L") (propertize form-string 'face 'soccer-face-loss))
 												((string-equal form-string "D") (propertize form-string 'face 'soccer-face-draw)))))
-					(format "%3s %4s %5s %4s %4s %5s %4s %3s %3s %5s %8s" (1+ n) team matches (propertize (format "%s" win) 'face 'soccer-face-win) (propertize (format "%s" loss) 'face 'soccer-face-loss) (propertize (format "%s" draw) 'face 'soccer-face-draw) goalF goalA (- goalF goalA) (+ (* 3 win) draw) (string-join current-form-string-list)))))
+					(format "%3s %4s %-20s %5s %4s %4s %5s %4s %3s %3s %5s %8s" (1+ n) team team-name matches (propertize (format "%s" win) 'face 'soccer-face-win) (propertize (format "%s" loss) 'face 'soccer-face-loss) (propertize (format "%s" draw) 'face 'soccer-face-draw) goalF goalA (- goalF goalA) (+ (* 3 win) draw) (string-join current-form-string-list)))))
     (string-join (-insert-at 0 header-string table-string) "\n")))
 
 (defun soccer-table-top-4 (league)
@@ -361,7 +381,7 @@
   "Get full rank table of a LEAGUE."
   (interactive
    (list (completing-read "league: " (soccer--league-names))))
-  (let ((buffer-name "*soccer-rank-table*"))
+  (let ((buffer-name (concat "*soccer-rank-table-" league "*")))
     (generate-new-buffer buffer-name)
     (with-current-buffer buffer-name
       (insert (soccer--table-data league 30 "top")))
@@ -439,8 +459,8 @@
 	     (away-goal-scorers (dom-strings (dom-by-class dom "sp-goalscorers__away-team")))
 	     (home-goals (/ (length home-goal-scorers) 2))
 	     (away-goals (/ (length away-goal-scorers) 2))
-	     (home-scorecard-strings-list (-partition 2 home-goal-scorers))
-	     (away-scorecard-strings-list (-partition 2 away-goal-scorers)))
+	     (home-scorecard-strings-list (delete-dups (-partition 2 home-goal-scorers)))
+	     (away-scorecard-strings-list (delete-dups (-partition 2 away-goal-scorers))))
 	(when title
 	  `(("title" . ,title)
 	    ("home" . ,home)
@@ -452,8 +472,8 @@
 
 (defun soccer--all-clubs ()
   "Get all club names."
-  (-flatten (cl-loop for leagues in (soccer--league-names)
-		     collect (mapcar 'car (cdr (assoc leagues soccer-leagues--leagues-alist))))))
+  (delete-dups (-flatten (cl-loop for leagues in (soccer--league-names)
+				  collect (mapcar 'car (cdr (assoc leagues soccer-leagues--leagues-alist)))))))
 
 (defun soccer-scorecard (date home away)
   "Get the socrecard for a match between HOME and AWAY on a DATE.  Enter DATE in YYYY-MM-DD format if entering it manually.  If the input is from `org-read-date' calendar popup then it is in YYYY-MM-DD format by default."
@@ -473,15 +493,19 @@
 	       (away-team (cdr (assoc "away" scorecard-alist)))
 	       (home-scorecard-list (cdr (assoc "home-scorecard-list" scorecard-alist)))
 	       (away-scorecard-list (cdr (assoc "away-scorecard-list" scorecard-alist)))
-	       (home-scorecard (format "%-20s %s: %s" home-team home-goals (string-join (cl-loop for g in home-scorecard-list
-											 collect (format "%s(%s)" (-second-item g) (-first-item g))) ", ")))
-	       (away-scorecard (format "%-20s %s: %s" away-team away-goals (string-join (cl-loop for g in away-scorecard-list
-										   collect (format "%s(%s)" (-first-item g) (-second-item g))) ", "))))
-	  (message (format "%s\n%s" (propertize home-scorecard 'face (cond ((> home-goals away-goals) 'soccer-face-win)
-									   ((= home-goals away-goals) 'soccer-face-draw)
-									   ((< home-goals away-goals) 'soccer-face-loss))) (propertize away-scorecard 'face (cond ((> home-goals away-goals) 'soccer-face-loss)
-																				  ((= home-goals away-goals) 'soccer-face-draw)
-																				  ((< home-goals away-goals) 'soccer-face-win))))))
+	       (home-scorecard-goals (delete-dups (cl-loop for g in home-scorecard-list
+							   collect (format "%s(%s)" (-second-item g) (-first-item g)))))
+	       (away-scorecard-goals (delete-dups (cl-loop for g in away-scorecard-list
+							   collect (format "%s(%s)" (-first-item g) (-second-item g)))))
+	       (home-scorecard (format "%-20s %s: %s" home-team (length home-scorecard-goals) (string-join home-scorecard-goals ", ")))
+	       (away-scorecard (format "%-20s %s: %s" away-team (length away-scorecard-goals) (string-join away-scorecard-goals  ", "))))
+	  (message (format "%s\n%s\n%s" (propertize (-first-item title) 'face 'soccer-face-scorecard-header)
+			   (propertize home-scorecard 'face (cond ((> home-goals away-goals) 'soccer-face-win)
+								  ((= home-goals away-goals) 'soccer-face-draw)
+								  ((< home-goals away-goals) 'soccer-face-loss)))
+			   (propertize away-scorecard 'face (cond ((> home-goals away-goals) 'soccer-face-loss)
+								  ((= home-goals away-goals) 'soccer-face-draw)
+								  ((< home-goals away-goals) 'soccer-face-win))))))
       (message "Result not found. Probably entered wrong date/name?\nTry `soccer-fixtures-next` to get the correct match info."))))
 
 (provide 'soccer)
