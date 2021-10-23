@@ -14,7 +14,9 @@
 - [[#common-interactive-functions][Common interactive functions]]
 - [[#screenshots][Screenshots]]
   - [[#soccer-fixtures-next-5][soccer-fixtures-next-5]]
+  - [[#soccer-fixtures-all-clubs][soccer-fixtures-all-clubs]]
   - [[#soccer-results-last-5][soccer-results-last-5]]
+  - [[#soccer-results-all-clubs][soccer-results-all-clubs]]
   - [[#soccer-table-top-4][soccer-table-top-4]]
   - [[#soccer-table-bottom-4][soccer-table-bottom-4]]
   - [[#soccer-table][soccer-table]]
@@ -106,8 +108,11 @@ Additionally you may want to make some keybindings to call the interactive funct
 ** soccer-fixtures-next-5
     #+html: <div> <img src="./screenshots/fixtures-1.png"> </div>
     #+html: <div> <img src="./screenshots/fixtures-2.png"> </div>
+** soccer-fixtures-all-clubs
 ** soccer-results-last-5
-    #+html: <div> <img src="./screenshots/soccer-results-last-5.png"> </div>
+   #+html: <div> <img src="./screenshots/results-1.png"> </div>
+   #+html: <div> <img src="./screenshots/results-2.png"> </div>
+** soccer-results-all-clubs
 ** soccer-table-top-4
     #+html: <div> <img src="./screenshots/table-top-4.png"></div>
 ** soccer-table-bottom-4
