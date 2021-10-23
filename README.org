@@ -109,10 +109,12 @@ Additionally you may want to make some keybindings to call the interactive funct
     #+html: <div> <img src="./screenshots/fixtures-1.png"> </div>
     #+html: <div> <img src="./screenshots/fixtures-2.png"> </div>
 ** soccer-fixtures-all-clubs
+   #+html: <div> <img src="./screenshots/fixtures-all-clubs.png"> </div>
 ** soccer-results-last-5
    #+html: <div> <img src="./screenshots/results-1.png"> </div>
    #+html: <div> <img src="./screenshots/results-2.png"> </div>
 ** soccer-results-all-clubs
+  #+html: <div> <img src="./screenshots/results-all-clubs.png"> </div>
 ** soccer-table-top-4
     #+html: <div> <img src="./screenshots/table-top-4.png"></div>
 ** soccer-table-bottom-4
