@@ -104,8 +104,8 @@ Additionally you may want to make some keybindings to call the interactive funct
   | ~soccer-scorecard~            | Scorecard                          |
 * Screenshots
 ** soccer-fixtures-next-5
-    #+html: <div> <img src="./screenshots/soccer-fixtures-1.png"> </div>
-    #+html: <div> <img src="./screenshots/soccer-fixtures-2.png"> </div>
+    #+html: <div> <img src="./screenshots/fixtures-1.png"> </div>
+    #+html: <div> <img src="./screenshots/fixtures-2.png"> </div>
 ** soccer-results-last-5
     #+html: <div> <img src="./screenshots/soccer-results-last-5.png"> </div>
 ** soccer-table-top-4
