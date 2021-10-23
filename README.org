@@ -104,15 +104,17 @@ Additionally you may want to make some keybindings to call the interactive funct
   | ~soccer-scorecard~            | Scorecard                          |
 * Screenshots
 ** soccer-fixtures-next-5
-    #+html: <div> <img src="./screenshots/soccer-fixtures-next-5.png"> </div>
+    #+html: <div> <img src="./screenshots/soccer-fixtures-1.png"> </div>
+    #+html: <div> <img src="./screenshots/soccer-fixtures-2.png"> </div>
 ** soccer-results-last-5
     #+html: <div> <img src="./screenshots/soccer-results-last-5.png"> </div>
 ** soccer-table-top-4
-    #+html: <div> <img src="./screenshots/soccer-table-top-4.png"></div>
+    #+html: <div> <img src="./screenshots/table-top-4.png"></div>
 ** soccer-table-bottom-4
-    #+html: <div> <img src="./screenshots/soccer-table-bottom-4.png"></div>
+    #+html: <div> <img src="./screenshots/table-bottom-4.png"></div>
 ** soccer-table
-    #+html: <div> <img src="./screenshots/soccer-table.png"></div>
+   #+html: <div> <img src="./screenshots/table-1.png"></div>
+   #+html: <div> <img src="./screenshots/table-2.png"></div>
 ** soccer-scorecard
    #+html: <div> <img src="./screenshots/scorecard-1.png"></div>
    #+html: <div> <img src="./screenshots/scorecard-2.png"></div>
