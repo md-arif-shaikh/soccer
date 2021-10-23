@@ -459,8 +459,8 @@
 	     (away-goal-scorers (dom-strings (dom-by-class dom "sp-goalscorers__away-team")))
 	     (home-goals (/ (length home-goal-scorers) 2))
 	     (away-goals (/ (length away-goal-scorers) 2))
-	     (home-scorecard-strings-list (-partition 2 home-goal-scorers))
-	     (away-scorecard-strings-list (-partition 2 away-goal-scorers)))
+	     (home-scorecard-strings-list (delete-dups (-partition 2 home-goal-scorers)))
+	     (away-scorecard-strings-list (delete-dups (-partition 2 away-goal-scorers))))
 	(when title
 	  `(("title" . ,title)
 	    ("home" . ,home)
@@ -472,8 +472,8 @@
 
 (defun soccer--all-clubs ()
   "Get all club names."
-  (-flatten (cl-loop for leagues in (soccer--league-names)
-		     collect (mapcar 'car (cdr (assoc leagues soccer-leagues--leagues-alist))))))
+  (delete-dups (-flatten (cl-loop for leagues in (soccer--league-names)
+				  collect (mapcar 'car (cdr (assoc leagues soccer-leagues--leagues-alist)))))))
 
 (defun soccer-scorecard (date home away)
   "Get the socrecard for a match between HOME and AWAY on a DATE.  Enter DATE in YYYY-MM-DD format if entering it manually.  If the input is from `org-read-date' calendar popup then it is in YYYY-MM-DD format by default."
@@ -493,10 +493,12 @@
 	       (away-team (cdr (assoc "away" scorecard-alist)))
 	       (home-scorecard-list (cdr (assoc "home-scorecard-list" scorecard-alist)))
 	       (away-scorecard-list (cdr (assoc "away-scorecard-list" scorecard-alist)))
-	       (home-scorecard (format "%-20s %s: %s" home-team home-goals (string-join (cl-loop for g in home-scorecard-list
-											 collect (format "%s(%s)" (-second-item g) (-first-item g))) ", ")))
-	       (away-scorecard (format "%-20s %s: %s" away-team away-goals (string-join (cl-loop for g in away-scorecard-list
-										   collect (format "%s(%s)" (-first-item g) (-second-item g))) ", "))))
+	       (home-scorecard-goals (delete-dups (cl-loop for g in home-scorecard-list
+							   collect (format "%s(%s)" (-second-item g) (-first-item g)))))
+	       (away-scorecard-goals (delete-dups (cl-loop for g in away-scorecard-list
+							   collect (format "%s(%s)" (-first-item g) (-second-item g)))))
+	       (home-scorecard (format "%-20s %s: %s" home-team (length home-scorecard-goals) (string-join home-scorecard-goals ", ")))
+	       (away-scorecard (format "%-20s %s: %s" away-team (length away-scorecard-goals) (string-join away-scorecard-goals  ", "))))
 	  (message (format "%s\n%s\n%s" (propertize (-first-item title) 'face 'soccer-face-scorecard-header)
 			   (propertize home-scorecard 'face (cond ((> home-goals away-goals) 'soccer-face-win)
 								  ((= home-goals away-goals) 'soccer-face-draw)
