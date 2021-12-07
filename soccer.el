@@ -76,6 +76,16 @@
   "Color to indicate time to kickoff.")
 (defvar soccer-color--scorecard-header "#E5C07B"
   "Color for scorecard title.")
+(defvar soccer-color--local-time "#E5C07B"
+  "Color for local time.")
+
+(defface soccer-face-local-time
+  `((t :foreground ,soccer-color--local-time
+       :weight extra-bold
+       :box nil
+       :underline nil))
+  "Face for local time."
+  :group 'soccer-face)
 
 (defface soccer-face-win
   `((t :foreground ,soccer-color--win
@@ -201,14 +211,16 @@
 	 (days-remain (nth 0 time-till-kickoff-list))
 	 (hours-remain (nth 1 time-till-kickoff-list))
 	 (mins-remain (nth 2 time-till-kickoff-list))
-	 time-till-kickoff-string)
+	 time-till-kickoff-string
+	 local-time-string)
+    (setq local-time-string (format "%s %s %s %s %s:%s %s" match-year-local match-month-local (format "%02d" match-day-num-local) match-day-local (format "%02d" local-hour) (format "%02d" local-min) local-A/P))
     (setq time-till-kickoff-string (format "⟶ %s %s %s"
-					   (if (> days-remain 0) (format "%s days" days-remain) "")
-					   (if (> hours-remain 0) (format "%s hours" hours-remain) "")
-					   (cond ((> mins-remain 0) (format "%s mins to start" mins-remain))
+					   (if (> days-remain 0) (format "%2s days" days-remain) "")
+					   (if (> hours-remain 0) (format "%2s hours" hours-remain) "")
+					   (cond ((> mins-remain 0) (format "%2s mins untill kickoff" mins-remain))
 						 ((and (< mins-remain 0) (> mins-remain (- 95))) "match is live now.")
 						 (t "match has finished"))))
-    (format "%s %s  Local Time: %s %s %s %s %s:%s %s %s - %s %s" date time match-year-local match-month-local (format "%02d" match-day-num-local) match-day-local (format "%02d" local-hour) (format "%02d" local-min) local-A/P (propertize home 'face 'soccer-face-fixtures) (propertize away 'face 'soccer-face-fixtures) (propertize time-till-kickoff-string 'face 'soccer-face-time-to-kickoff))))
+    (format "%s %s  LT: %s %40s - %-40s %s" date time (propertize local-time-string 'face 'soccer-face-local-time) (propertize home 'face 'soccer-face-fixtures) (propertize away 'face 'soccer-face-fixtures) (propertize time-till-kickoff-string 'face 'soccer-face-time-to-kickoff))))
 
 (defun soccer--get-league-data-results-stings (dates times homes aways results source-time-utc-offset n)
   "Get the fixtures stings to show in buffer for given DATES, TIMES, HOMES, AWAYS, RESULTS, SOURCE-TIME-UTC-OFFSET and N, where is the nth in the results."
