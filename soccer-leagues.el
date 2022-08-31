@@ -32,48 +32,34 @@
 ;;; Code:
 
 (require 'dom)
+(require 's)
 
-(defun soccer-leagues--get-club-names-and-urls (country league)
-  "Get the team names and the corresponding urls for a LEAGUE in a COUNTRY."
-  (let* ((url (replace-regexp-in-string " " "-" (format "https://www.scorespro.com/soccer/%s/%s/teams/" (downcase country) (downcase league)))))
+(defun soccer-leagues--get-club-names-and-urls (league)
+  "Get the team names and the corresponding urls for a LEAGUE."
+  (let* ((url (concat "https://www.theguardian.com/football/" (s-downcase (s-replace " " "" league)) "/table")))
     (with-current-buffer (url-retrieve-synchronously url)
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
-	     (data-dom (dom-by-class dom "team st-br uc"))
+	     (data-dom (dom-by-class dom "team-name__long")))
+	(cl-loop for d in data-dom
+		 collect (cons (s-trim (-first-item (dom-strings d))) (dom-attr d 'href)))))))
+
+(defun soccer-leagues--get-league-names-and-urls ()
+  "Get the team names and the corresponding urls."
+  (let* ((url "https://www.theguardian.com/football/teams"))
+    (with-current-buffer (url-retrieve-synchronously url)
+      (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
+	     (data-dom (dom-by-class dom "fc-container__header__title"))
 	     (url-list (cl-loop for d in data-dom
-				collect (cons (car (dom-strings (dom-by-tag d 'a))) (concat "https://www.scorespro.com" (dom-attr (dom-by-tag d 'a) 'href))))))
+				collect (cons (car (dom-strings (dom-by-class d "fc-container__title__text"))) (dom-attr (dom-by-tag d 'a) 'href)))))
         url-list))))
 
 (defgroup soccer-leagues nil
   "Customization group for soccer leagues."
-  :group 'soccer)
-
-(defcustom soccer-leagues-alist '(("England" . "Premier League")
-				  ("Spain" . "Laliga")
-				  ("France" . "Ligue 1")
-				  ("Italy" . "Serie A")
-				  ("Germany" . "Bundesliga")
-				  ("England" . "Championship"))
-  "Each element is a cons-cell (CONTRY . LEAGUE)."
-  :type '(repeat (cons :tag "COUNTRY"
-		       (choice
-			(string :tag "Name")
-			(const "Table"))
-		       (string :tag "CLUB")))
-  :group 'soccer-leagues)
-
-(defun soccer-leagues--get-leagues-alist ()
-  "Get soccer league alist."
-  (let* ((country-list (mapcar 'car soccer-leagues-alist))
-	 (league-list (mapcar 'cdr soccer-leagues-alist)))
-    (cl-loop for n from 0 to (1- (length country-list))
-	     collect (let* ((country (nth n country-list))
-			    (league (nth n league-list))
-			    (name (format "%s: %s" country league))
-			    (urls (soccer-leagues--get-club-names-and-urls country league)))
-		       (cons name urls)))))
+  :group 'soccer
+  :link '(url-link :tag "Homepage" "https://github.com/md-arif-shaikh/soccer"))
 
 (defvar soccer-leagues--leagues-alist)
-(setq soccer-leagues--leagues-alist (soccer-leagues--get-leagues-alist))
+(setq soccer-leagues--leagues-alist (soccer-leagues--get-league-names-and-urls))
 
 (provide 'soccer-leagues)
 
