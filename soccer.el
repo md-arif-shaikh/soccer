@@ -323,7 +323,7 @@
 
 (defun soccer--get-league-table-data-alist (league)
   "Get data alist for standing table for a LEAGUE."
-  (let* ((url (soccer--get-league-url league "Table")))
+  (let* ((url (concat (soccer--get-league-url league) "/table")))
     (with-current-buffer (url-retrieve-synchronously url)
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
 	     (dom-strings-list (-remove #'string-blank-p (dom-strings (nth 0 (dom-by-tag dom 'table)))))
@@ -336,19 +336,19 @@
 	     goal-against
 	     current-form-list)
 	(setq teams-full-name (cl-loop for result in results-strings-list
-				       collect (nth 1 result)))
+				       collect (string-trim (nth 1 result))))
 	(setq teams (cl-loop for result in results-strings-list
-			     collect (nth 2 result)))
+			     collect ""))
 	(setq played (cl-loop for result in results-strings-list
-			      collect (nth 3 result)))
+			      collect (nth 2 result)))
 	(setq wins (cl-loop for result in results-strings-list
-			    collect (nth 4 result)))
+			    collect (nth 3 result)))
 	(setq losses (cl-loop for result in results-strings-list
-			      collect (nth 6 result)))
+			      collect (nth 5 result)))
 	(setq goal-for (cl-loop for result in results-strings-list
-				collect (car (split-string (nth 7 result)))))
+				collect (nth 6 result)))
 	(setq goal-against (cl-loop for result in results-strings-list
-				    collect (nth 2 (split-string (nth 7 result)))))
+				    collect (nth 7 result)))
 	(setq current-form-list (cl-loop for result in results-strings-list
 					 collect (-take-last 5 result)))
         `(("teams-full-name" . ,teams-full-name)
@@ -388,29 +388,30 @@
 					      current-form-string-list
 					      draw)
 					  (setq draw (- (string-to-number matches) win loss))
-					  (setq current-form-string-list (cl-loop for form-string in current-form
-										  collect (cond ((string-equal form-string "W") (propertize form-string 'face 'soccer-face-win))
-												((string-equal form-string "L") (propertize form-string 'face 'soccer-face-loss))
-												((string-equal form-string "D") (propertize form-string 'face 'soccer-face-draw)))))
+					  (setq current-form-string-list (cl-loop for form-string-full in current-form
+										  collect (let ((form-string (upcase (substring form-string-full 0 1))))
+											    (cond ((string-equal form-string "W") (propertize form-string 'face 'soccer-face-win))
+												  ((string-equal form-string "L") (propertize form-string 'face 'soccer-face-loss))
+												  ((string-equal form-string "D") (propertize form-string 'face 'soccer-face-draw))))))
 					(format "%3s %4s %-20s %5s %4s %4s %5s %4s %3s %3s %5s %8s" (1+ n) team team-name matches (propertize (format "%s" win) 'face 'soccer-face-win) (propertize (format "%s" loss) 'face 'soccer-face-loss) (propertize (format "%s" draw) 'face 'soccer-face-draw) goalF goalA (- goalF goalA) (+ (* 3 win) draw) (string-join current-form-string-list)))))
     (string-join (-insert-at 0 header-string table-string) "\n")))
 
 (defun soccer-table-top-4 (league)
   "Get table for LEAGUE with top 4 teams."
   (interactive
-   (list (completing-read "league: " (soccer--league-names))))
+   (list (completing-read "league: " (soccer--get-league-names))))
   (message (soccer--table-data league 4 "top")))
 
 (defun soccer-table-bottom-4 (league)
   "Get table for LEAGUE with bottom 4 teams."
   (interactive
-   (list (completing-read "league: " (soccer--league-names))))
+   (list (completing-read "league: " (soccer--get-league-names))))
   (message (soccer--table-data league 4 "bottom")))
 
 (defun soccer-table (league)
   "Get full rank table of a LEAGUE."
   (interactive
-   (list (completing-read "league: " (soccer--league-names))))
+   (list (completing-read "league: " (soccer--get-league-names))))
   (let ((buffer-name (concat "*soccer-rank-table-" league "*")))
     (generate-new-buffer buffer-name)
     (with-current-buffer buffer-name
