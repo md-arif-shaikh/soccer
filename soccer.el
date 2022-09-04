@@ -476,8 +476,8 @@
 (defun soccer-results-all-clubs (league)
   "All the latest results in a LEAGUE."
   (interactive
-   (list (completing-read "league: " (soccer--league-names))))
-  (soccer--get-league-data league "All" "results" 10))
+   (list (completing-read "league: " (soccer--get-league-names))))
+  (soccer--get-league-data league "results" 10))
 
 ;; score card
 (defun soccer--get-scorecard-alist (date home away)
