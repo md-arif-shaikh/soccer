@@ -137,11 +137,13 @@
 
 (defun soccer--get-league-names ()
   "Extract league names from `soccer-leagues--leagues-alist'."
-  (mapcar 'car soccer-leagues--leagues-alist))
+  (-concat (mapcar 'car soccer-leagues--leagues-alist)
+	   '("Champions League" "UEFA Europa League" "Carabao Cup" "Nations League")))
 
 (defun soccer--get-league-url (league)
   "Get url of a LEAGUE."
-  (cdr (assoc league soccer-leagues--leagues-alist)))
+  (soccer-leagues--get-base-league-url league))
+
 
 (defun soccer--get-date-from-datetime (datetime)
   "Get date from DATETIME string."

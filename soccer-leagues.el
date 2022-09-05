@@ -34,9 +34,19 @@
 (require 'dom)
 (require 's)
 
+(defun soccer-leagues--get-base-url ()
+  "Get the base url of the website to get data from."
+  "https://www.theguardian.com/football/")
+
+(defun soccer-leagues--get-base-league-url (league)
+  "Get the base url for a LEAGUE."
+  (concat (soccer-leagues--get-base-url) (s-downcase (if (string-equal league "UEFA Europa League")
+							 (s-replace " " "-" league)
+						       (s-replace " " "" league)))))
+
 (defun soccer-leagues--get-club-names-and-urls (league)
   "Get the team names and the corresponding urls for a LEAGUE."
-  (let* ((url (concat "https://www.theguardian.com/football/" (s-downcase (s-replace " " "" league)) "/table")))
+  (let* ((url (concat (soccer-leagues--get-base-league-url league)  "/table")))
     (with-current-buffer (url-retrieve-synchronously url)
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
 	     (data-dom (dom-by-class dom "team-name__long")))
