@@ -40,7 +40,7 @@
 
 (defun soccer-leagues--get-base-league-url (league)
   "Get the base url for a LEAGUE."
-  (concat (soccer-leagues--get-base-url) (s-downcase (if (string-equal league "UEFA Europa League")
+  (concat (soccer-leagues--get-base-url) (s-downcase (if (member league '("UEFA Europa League" "Nations League"))
 							 (s-replace " " "-" league)
 						       (s-replace " " "" league)))))
 
