@@ -71,6 +71,9 @@
 (defvar soccer-leagues--leagues-alist)
 (setq soccer-leagues--leagues-alist (soccer-leagues--get-league-names-and-urls))
 
+(defvar soccer-leagues--international-tournaments '("world-cup-2022")
+  "List of international tournaments.")
+
 (provide 'soccer-leagues)
 
 ;;; soccer-leagues.el ends here
