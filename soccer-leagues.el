@@ -40,9 +40,9 @@
 
 (defun soccer-leagues--get-base-league-url (league)
   "Get the base url for a LEAGUE."
-  (concat (soccer-leagues--get-base-url) (s-downcase (if (member league '("UEFA Europa League" "Nations League"))
-							 (s-replace " " "-" league)
-						       (s-replace " " "" league)))))
+  (if (member league (mapcar #'car soccer-leagues--leagues-alist))
+      (cdr (assoc league soccer-leagues--leagues-alist))
+    (user-error "Unknown league %s" league)))
 
 (defun soccer-leagues--get-club-names-and-urls (league)
   "Get the team names and the corresponding urls for a LEAGUE."
@@ -53,6 +53,7 @@
 	(cl-loop for d in data-dom
 		 collect (cons (s-trim (-first-item (dom-strings d))) (dom-attr d 'href)))))))
 
+;;; This function is no longer used. Instead we use competition tab
 (defun soccer-leagues--get-league-names-and-urls ()
   "Get the team names and the corresponding urls."
   (let* ((url "https://www.theguardian.com/football/teams"))
@@ -63,16 +64,23 @@
 				collect (cons (car (dom-strings (dom-by-class d "fc-container__title__text"))) (dom-attr (dom-by-tag d 'a) 'href)))))
         url-list))))
 
+(defun soccer-leagues--get-competition-names-and-urls ()
+  "Get the competition names and the corresponding urls."
+  (let* ((url "https://www.theguardian.com/football/competitions"))
+    (with-current-buffer (url-retrieve-synchronously url)
+      (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
+	     (data-dom (dom-by-class dom "fc-item fc-item--list-compact"))
+	     (url-list (cl-loop for d in data-dom
+				collect (cons (car (dom-strings d)) (dom-attr (dom-by-tag d 'a) 'href)))))
+        url-list))))
+
 (defgroup soccer-leagues nil
   "Customization group for soccer leagues."
   :group 'soccer
   :link '(url-link :tag "Homepage" "https://github.com/md-arif-shaikh/soccer"))
 
 (defvar soccer-leagues--leagues-alist)
-(setq soccer-leagues--leagues-alist (soccer-leagues--get-league-names-and-urls))
-
-(defvar soccer-leagues--international-tournaments '("world-cup-2022")
-  "List of international tournaments.")
+(setq soccer-leagues--leagues-alist (soccer-leagues--get-competition-names-and-urls))
 
 (provide 'soccer-leagues)
 

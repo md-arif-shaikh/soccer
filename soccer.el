@@ -137,9 +137,7 @@
 
 (defun soccer--get-league-names ()
   "Extract league names from `soccer-leagues--leagues-alist'."
-  (-concat (mapcar 'car soccer-leagues--leagues-alist)
-	   '("Champions League" "UEFA Europa League" "Carabao Cup" "Nations League")
-	   soccer-leagues--international-tournaments))
+  (mapcar 'car soccer-leagues--leagues-alist))
 
 (defun soccer--get-league-url (league)
   "Get url of a LEAGUE."
