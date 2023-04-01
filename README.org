@@ -21,7 +21,7 @@
   - [[#soccer-table][soccer-table]]
 
 * About the package
-  ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results, standing table, scorecard etc for soccer (football) matches inside emacs. Following are some the competitions that are included
+  ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results, standing table, etc for soccer (football) matches inside emacs. Following are some the competitions that are included
   - Premier League (England)
   - La Liga (Spain)
   - Ligue 1 (France)
@@ -50,7 +50,6 @@ Additionally you may want to make some keybindings to call the interactive funct
       (setq soccer-time-local-time-utc-offset "+0530")
       :bind (("C-c s f" . soccer-fixtures-next)
 	     ("C-c s r" . soccer-results-last)
-	     ("C-c s s" . soccer-scorecard)
 	     ("C-c s t" . soccer-table)))
   #+END_SRC
   This will fetch and install the package from ~Melpa~, set your local ~utc-offset~ and set the above keybindings.
@@ -63,7 +62,6 @@ Additionally you may want to make some keybindings to call the interactive funct
       (setq soccer-time-local-time-utc-offset "+0530")
       :bind (("C-c s f" . soccer-fixtures-next)
 	     ("C-c s r" . soccer-results-last)
-	     ("C-c s s" . soccer-scorecard)
 	     ("C-c s t" . soccer-table)))
   #+END_SRC
 * Useful interactive functions
@@ -82,7 +80,7 @@ Additionally you may want to make some keybindings to call the interactive funct
 | ~soccer-table~                | Full Ranking table                 |
 | ~soccer-table-top-4~          | Rank table with top 4 teams        |
 | ~soccer-table-bottom-4~       | Rank table with bottom 4 teams     |
-| soccer-schedule             | Add fixtures in org-agenda         |
+| ~soccer-schedule~             | Add fixtures in org-agenda         |
 |-----------------------------+------------------------------------|
 
 * Screenshots
