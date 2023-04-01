@@ -10,7 +10,7 @@
   - [[#set-local-time][Set local time]]
   - [[#keybindings][Keybindings]]
   - [[#full-working-configuration][Full working configuration]]
-- [[#common-interactive-functions][Common interactive functions]]
+- [[#useful-interactive-functions][Useful interactive functions]]
 - [[#screenshots][Screenshots]]
   - [[#soccer-fixtures-next-5][soccer-fixtures-next-5]]
   - [[#soccer-fixtures-all-clubs][soccer-fixtures-all-clubs]]
@@ -19,7 +19,6 @@
   - [[#soccer-table-top-4][soccer-table-top-4]]
   - [[#soccer-table-bottom-4][soccer-table-bottom-4]]
   - [[#soccer-table][soccer-table]]
-  - [[#soccer-scorecard][soccer-scorecard]]
 
 * About the package
   ~Soccer~ is an [[https://www.gnu.org/software/emacs/][Emacs]] package for getting fixtures, results, standing table, scorecard etc for soccer (football) matches inside emacs. Following are some the competitions that are included
@@ -67,22 +66,25 @@ Additionally you may want to make some keybindings to call the interactive funct
 	     ("C-c s s" . soccer-scorecard)
 	     ("C-c s t" . soccer-table)))
   #+END_SRC
-* Common interactive functions
+* Useful interactive functions
   Call these using ~M-x Function~ where ~Function~ is any of the following functions
 
-  | Functions                   | Actions                            |
-  | ~soccer-fixtures-next~        | Fixture for the Next match         |
-  | ~soccer-fixtures-next-5~      | Fixtures of the Next 5 matches     |
-  | ~soccer-fixtures-full-in-org~ | Full fixtures saved in org file    |
-  | ~soccer-fixtures-all-clubs~   | Fixtures for all clubs in a league |
-  | ~soccer-results-last~         | Result of the last match           |
-  | ~soccer-results-last-5~       | Results of the last 5 matches      |
-  | ~soccer-results-full-in-org~  | Full list of results in org file   |
-  | ~soccer-results-all-clubs~    | Results for all clubs in a league  |
-  | ~soccer-table~                | Full Ranking table                 |
-  | ~soccer-table-top-4~          | Rank table with top 4 teams        |
-  | ~soccer-table-bottom-4~       | Rank table with bottom 4 teams     |
-  | ~soccer-scorecard~            | Scorecard                          |
+|-----------------------------+------------------------------------|
+| Functions                   | Actions                            |
+| ~soccer-fixtures-next~        | Fixture for the Next match         |
+| ~soccer-fixtures-next-5~      | Fixtures of the Next 5 matches     |
+| ~soccer-fixtures-full-in-org~ | Full fixtures saved in org file    |
+| ~soccer-fixtures-all-clubs~   | Fixtures for all clubs in a league |
+| ~soccer-results-last~         | Result of the last match           |
+| ~soccer-results-last-5~       | Results of the last 5 matches      |
+| ~soccer-results-full-in-org~  | Full list of results in org file   |
+| ~soccer-results-all-clubs~    | Results for all clubs in a league  |
+| ~soccer-table~                | Full Ranking table                 |
+| ~soccer-table-top-4~          | Rank table with top 4 teams        |
+| ~soccer-table-bottom-4~       | Rank table with bottom 4 teams     |
+| soccer-schedule             | Add fixtures in org-agenda         |
+|-----------------------------+------------------------------------|
+
 * Screenshots
 ** soccer-fixtures-next-5
     #+html: <div> <img src="./screenshots/fixtures-1.png"> </div>
@@ -101,8 +103,3 @@ Additionally you may want to make some keybindings to call the interactive funct
 ** soccer-table
    #+html: <div> <img src="./screenshots/table-1.png"></div>
    #+html: <div> <img src="./screenshots/table-2.png"></div>
-** soccer-scorecard
-   #+html: <div> <img src="./screenshots/scorecard-1.png"></div>
-   #+html: <div> <img src="./screenshots/scorecard-2.png"></div>
-   #+html: <div> <img src="./screenshots/scorecard-3.png"></div>
-   #+html: <div> <img src="./screenshots/scorecard-4.png"></div>
