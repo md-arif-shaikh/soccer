@@ -540,5 +540,91 @@
 								  ((< home-goals away-goals) 'soccer-face-win))))))
       (message "Result not found. Probably entered wrong date/name?\nTry `soccer-fixtures-next` to get the correct match info."))))
 
+;;; Add soccer schedules for favourite matches
+(defcustom soccer-schedule-league-team-alist '()
+  "An alist where each element is (league team).
+This is used to add the schedules for the teams to agenda."
+  :type '(alist :value-type (group integer))
+  :group 'soccer)
+
+(defun soccer--compute-delta-weeks (time)
+  "Compute the number of weeks between now and TIME.
+TIME should be in org-time-stamp format."
+  (let* ((time-now (current-time))
+	 (time-given (org-time-string-to-time time))
+	 (time-delta (time-subtract time-given time-now)))
+    (/ (time-to-number-of-days time-delta) 7)))
+
+(defun soccer--get-local-timestamp (time date source-time-utc-offset)
+  "Get local time stamp using origin DATE and TIME and SOURCE-TIME-UTC-OFFSET."
+  (let* ((delta-offset-seconds (* 60 (- (timezone-zone-to-minute soccer-time-local-time-utc-offset) (timezone-zone-to-minute source-time-utc-offset))))
+	(time-origin (org-time-string-to-time (format "%s %s" date time)))
+	(time-local (time-add time-origin (seconds-to-time delta-offset-seconds))))
+    (format-time-string "%F %R" time-local)))
+
+(defun soccer--get-schedule-data (league team num-weeks)
+  "Create the schedule for TEAM in a LEAGUE in the next NUM-WEEKS."
+  (let* ((data (soccer--get-league-data-alist league "fixtures" team))
+	 (dates (cdr (assoc "date" data)))
+	 (time (cdr (assoc "time" data)))
+	 (home (cdr (assoc "home" data)))
+	 (away (cdr (assoc "away" data)))
+	 (utc-offset (cdr (assoc "source-time-utc-offset" data))))
+    (cl-loop for d in data
+	     for date in dates
+	     for ti in time
+	     for h in home
+	     for a in away
+	     for offset in utc-offset
+	     if (< (soccer--compute-delta-weeks (soccer--get-local-timestamp ti date offset)) num-weeks)
+	     collect (list (format "%s: %s vs %s" league h a) (format "SCHEDULED: <%s>" (soccer--get-local-timestamp ti date offset))))))
+
+(defcustom soccer-schedule-dir (expand-file-name "~/Dropbox/org/")
+  "Directory to store soccer schedules.
+Remember to add this in the list of agenda files if it's not already added."
+  :type 'string
+  :group 'soccer)
+
+(defun soccer--get-schedule-file-name (league)
+  "Get the file name based on LEAGUE."
+  (file-name-concat soccer-schedule-dir (format "%s.org" (string-replace " " "-" league))))
+
+(defun soccer--create-initial-file (league)
+  "Create a file for LEAGUE to store schedules."
+  (let ((file-name (soccer--get-schedule-file-name league)))
+    (with-temp-buffer
+      (insert (format "#+TITLE: Schedules for %s\n\n" league))
+      (append-to-file (point-min) (point-max) file-name))))
+
+(defun soccer--schedule-existsp (header file-name)
+  "Check if a schedule HEADER aleady exists inside a file of FILE-NAME."
+  (let ((content (with-temp-buffer
+		   (insert-file-contents-literally file-name)
+		   (forward-line)
+		   (buffer-substring-no-properties (point) (point-max)))))
+    (string-match-p header content)))
+
+(defun soccer-schedule (league team num-weeks)
+  "Add the schedules of TEAM in LEAGUE for the next NUM-WEEKS."
+  (interactive
+   (let* ((league-name (completing-read "league: " (soccer--get-league-names)))
+	  (team-name (completing-read "team: " (mapcar 'car (soccer-leagues--get-club-names-and-urls league-name))))
+	  (num-weeks (completing-read "for number of weeks: " (mapcar #'number-to-string (number-sequence 1 38)))))
+     (list league-name team-name (string-to-number num-weeks))))
+  (let* ((file-name (soccer--get-schedule-file-name league))
+	 (data (soccer--get-schedule-data league team num-weeks))
+	 (headers (mapcar #'car data))
+	 (timestamps (mapcar #'(lambda (d) (car (cdr d))) data)))
+    (unless (file-exists-p file-name)
+      (soccer--create-initial-file league))
+    (with-temp-buffer
+      (cl-loop for h in headers
+	       for ts in timestamps
+	       when (not (soccer--schedule-existsp h file-name))
+	       do (insert (format "* %s\n%s\n\n" h ts)))
+      (append-to-file (point-min) (point-max) file-name))
+    (with-current-buffer (find-file-noselect file-name)
+      (write-file file-name))))
+
 (provide 'soccer)
 ;;; soccer.el ends here
