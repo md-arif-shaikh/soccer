@@ -397,18 +397,21 @@
 					(format "%3s %4s %-20s %5s %4s %4s %5s %4s %3s %3s %5s %8s" (1+ n) team team-name matches (propertize (format "%s" win) 'face 'soccer-face-win) (propertize (format "%s" loss) 'face 'soccer-face-loss) (propertize (format "%s" draw) 'face 'soccer-face-draw) goalF goalA (- goalF goalA) (+ (* 3 win) draw) (string-join current-form-string-list)))))
     (string-join (-insert-at 0 header-string table-string) "\n")))
 
+;;;###autoload
 (defun soccer-table-top-4 (league)
   "Get table for LEAGUE with top 4 teams."
   (interactive
    (list (completing-read "league: " (soccer--get-league-names))))
   (message (soccer--table-data league 4 "top")))
 
+;;;###autoload
 (defun soccer-table-bottom-4 (league)
   "Get table for LEAGUE with bottom 4 teams."
   (interactive
    (list (completing-read "league: " (soccer--get-league-names))))
   (message (soccer--table-data league 4 "bottom")))
 
+;;;###autoload
 (defun soccer-table (league)
   "Get full rank table of a LEAGUE."
   (interactive
@@ -419,6 +422,7 @@
       (insert (soccer--table-data league 30 "top")))
     (switch-to-buffer-other-window buffer-name)))
 
+;;;###autoload
 (defun soccer-fixtures-full-in-org (league club)
   "Full fixtures of CLUB of LEAGUE saved in a org file."
   (interactive
@@ -427,6 +431,7 @@
      (list league-name club-name)))
   (soccer--get-league-data-in-org league "fixtures" nil club))
 
+;;;###autoload
 (defun soccer-fixtures-next (league club)
   "The next match of CLUB of LEAGUE."
   (interactive
@@ -435,12 +440,14 @@
      (list league-name club-name)))
   (soccer--get-league-data league "fixtures" 1 club))
 
+;;;###autoload
 (defun soccer-fixtures-all-clubs (league)
   "The next matches in a LEAGUE."
   (interactive
    (list (completing-read "league: " (soccer--get-league-names))))
   (soccer--get-league-data league "fixtures" 10))
 
+;;;###autoload
 (defun soccer-fixtures-next-5 (league club)
   "The next 5 matches in fixtures of CLUB of LEAGUE."
   (interactive
@@ -449,7 +456,7 @@
      (list league-name club-name)))
      (soccer--get-league-data league "fixtures" 5 club))
 
-
+;;;###autoload
 (defun soccer-results-full-in-org (league club)
   "Full results of CLUB of LEAGUE saved in a org file."
   (interactive
@@ -458,6 +465,7 @@
      (list league-name club-name)))
   (soccer--get-league-data-in-org league club "results" nil))
 
+;;;###autoload
 (defun soccer-results-last (league club)
   "The last result of CLUB of LEAGUE."
   (interactive
@@ -466,6 +474,7 @@
      (list league-name club-name)))
   (soccer--get-league-data league "results" 1 club))
 
+;;;###autoload
 (defun soccer-results-last-5 (league club)
   "The last 5 results of CLUB of LEAGUE."
   (interactive
@@ -474,6 +483,7 @@
      (list league-name club-name)))
   (soccer--get-league-data league "results" 5 club))
 
+;;;###autoload
 (defun soccer-results-all-clubs (league)
   "All the latest results in a LEAGUE."
   (interactive
@@ -604,6 +614,7 @@ Remember to add this in the list of agenda files if it's not already added."
 		   (buffer-substring-no-properties (point) (point-max)))))
     (string-match-p header content)))
 
+;;;###autoload
 (defun soccer-schedule (league team num-weeks)
   "Add the schedules of TEAM in LEAGUE for the next NUM-WEEKS."
   (interactive
