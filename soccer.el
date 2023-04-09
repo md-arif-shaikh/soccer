@@ -609,7 +609,7 @@ Remember to add this in the list of agenda files if it's not already added."
 (defun soccer--schedule-existsp (header file-name)
   "Check if a schedule HEADER aleady exists inside a file of FILE-NAME."
   (let ((content (with-temp-buffer
-		   (insert-file-contents-literally file-name)
+		   (insert-file-contents file-name)
 		   (forward-line)
 		   (buffer-substring-no-properties (point) (point-max)))))
     (string-match-p header content)))
@@ -635,6 +635,53 @@ Remember to add this in the list of agenda files if it's not already added."
 	       do (insert (format "* %s\n%s\n\n" h ts)))
       (append-to-file (point-min) (point-max) file-name))
     (with-current-buffer (find-file-noselect file-name)
+      (write-file file-name)
+      (kill-buffer))))
+
+;;;###autoload
+(defun soccer-schedule-league (league num-weeks)
+  "Schedule fixtures of all clubs for a LEAGUE for next NUM-WEEKS."
+  (interactive
+   (let* ((league (completing-read "league: " (soccer--get-league-names)))
+	  (num-weeks (completing-read "for number of weeks: " (mapcar #'number-to-string (number-sequence 1 38)))))
+     (list league (string-to-number num-weeks))))
+  (let* ((team-names (mapcar 'car (soccer-leagues--get-club-names-and-urls league))))
+    (dolist (team team-names)
+      (soccer-schedule league team num-weeks))))
+
+;;;###autoload
+(defun soccer-schedule-remove-past-fixtures (league)
+    "Remove past fixtures of a LEAGUE."
+  (interactive
+   (let* ((league-name (completing-read "league: " (soccer--get-league-names))))
+     (list league-name)))
+  (let* ((file-name (soccer--get-schedule-file-name league)))
+    ;;; check if any file for the league exists
+    (unless (file-exists-p file-name)
+      (user-error "No schedule file for %s exists!" league))
+    (with-current-buffer (find-file-noselect file-name)
+      (goto-char (point-min))
+      ;;; forward line and look for the timestamps. For a given timestamp, check if it
+      ;;; is in the past and if yes then remove that fixture and go on till the end of
+      ;;; the file.
+      (while (not (eobp))
+	(let* ((current-line (thing-at-point 'line))
+	       (timestamp-beg (string-match "<" current-line)))
+	  (if timestamp-beg
+	      ;;; get the timestamp and then see if it is in the past
+	      (let* ((timestamp-end (string-match ">" current-line))
+		     (timestamp (substring current-line (1+ timestamp-beg) timestamp-end)))
+		;;; check if it is in the past
+		(when (< (time-to-seconds (time-subtract (org-time-string-to-time timestamp) (current-time))) 0)
+		  ;;; remove the schedule
+		  ;;; go to the header
+		  (forward-line -1)
+		  (let* ((beg (line-beginning-position)))
+		    (forward-line 2)
+		    ;;; delete the line break also unless it is the end of buffer
+		    ;;; by adding 1 to end position
+		    (delete-region beg (+ (line-end-position) (if (eobp) 0 1))))))))
+	    (forward-line))
       (write-file file-name))))
 
 (provide 'soccer)
