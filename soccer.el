@@ -595,6 +595,11 @@ Remember to add this in the list of agenda files if it's not already added."
   :type 'string
   :group 'soccer)
 
+(defcustom soccer-schedule-keyword "FOOTBALL"
+  "Keyword to represent fixture schedule in agenda view."
+  :type 'string
+  :group 'soccer)
+
 (defun soccer--get-schedule-file-name (league)
   "Get the file name based on LEAGUE."
   (file-name-concat soccer-schedule-dir (format "%s.org" (string-replace " " "-" league))))
@@ -632,7 +637,7 @@ Remember to add this in the list of agenda files if it's not already added."
       (cl-loop for h in headers
 	       for ts in timestamps
 	       when (not (soccer--schedule-existsp h file-name))
-	       do (insert (format "* %s\n%s\n\n" h ts)))
+	       do (insert (format "* %s %s\n%s\n\n" soccer-schedule-keyword h ts)))
       (append-to-file (point-min) (point-max) file-name))
     (with-current-buffer (find-file-noselect file-name)
       (write-file file-name)
@@ -683,6 +688,19 @@ Remember to add this in the list of agenda files if it's not already added."
 		    (delete-region beg (+ (line-end-position) (if (eobp) 0 1))))))))
 	    (forward-line))
       (write-file file-name))))
+
+;;;###autoload
+(defun soccer-schedule-remove-league (league)
+  "Remove all fixtures of a LEAGUE.
+This will remove the org file for the given league."
+  (interactive
+   (let* ((league-name (completing-read "league: " (soccer--get-league-names))))
+     (list league-name)))
+  (let* ((file-name (soccer--get-schedule-file-name league)))
+    ;;; check if any file for the league exists
+    (unless (file-exists-p file-name)
+      (user-error "No schedule file for %s exists!" league))
+    (delete-file file-name)))
 
 (provide 'soccer)
 ;;; soccer.el ends here
