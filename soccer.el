@@ -208,8 +208,6 @@
 	    (soccer--filter-league-data-alist-by-club club league-data)
 	  league-data)))))
 
-(soccer--get-league-data-alist "Premier League" "results")
-
 (defun soccer--filter-league-data-alist-by-club (club league-data-alist)
   "Filter the LEAGUE-DATA-ALIST by CLUB."
   (let* ((indices1 (-elem-indices club (cdr (assoc "home" league-data-alist))))
