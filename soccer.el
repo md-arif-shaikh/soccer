@@ -136,8 +136,8 @@
   :group 'soccer-face)
 
 (defun soccer--get-league-names ()
-  "Extract league names from `soccer-leagues--leagues-alist'."
-  (mapcar 'car soccer-leagues--leagues-alist))
+  "Extract league names from `soccer-leagues-leagues-alist'."
+  (mapcar 'car soccer-leagues-leagues-alist))
 
 (defun soccer--get-league-url (league)
   "Get url of a LEAGUE."
@@ -513,7 +513,7 @@
 (defun soccer--all-clubs ()
   "Get all club names."
   (delete-dups (-flatten (cl-loop for leagues in (soccer--league-names)
-				  collect (mapcar 'car (cdr (assoc leagues soccer-leagues--leagues-alist)))))))
+				  collect (mapcar 'car (cdr (assoc leagues soccer-leagues-leagues-alist)))))))
 
 (defun soccer-scorecard (date home away)
   "Get the socrecard for a match between HOME and AWAY on a DATE.  Enter DATE in YYYY-MM-DD format if entering it manually.  If the input is from `org-read-date' calendar popup then it is in YYYY-MM-DD format by default."

@@ -79,8 +79,24 @@
   :group 'soccer
   :link '(url-link :tag "Homepage" "https://github.com/md-arif-shaikh/soccer"))
 
-(defvar soccer-leagues--leagues-alist)
-(setq soccer-leagues--leagues-alist (soccer-leagues--get-competition-names-and-urls))
+;;; The functions to fetch league and urls is not working anymore. Hardcoding some of these.
+;;;(setq soccer-leagues--leagues-alist (soccer-leagues--get-competition-names-and-urls))
+(defcustom soccer-leagues-leagues-alist '(("Premier League" . "https://www.theguardian.com/football/premierleague")
+					  ("La Liga" . "https://www.theguardian.com/football/laligafootball")
+					  ("Serie A" . "https://www.theguardian.com/football/serieafootball")
+					  ("Bundeshliga" . "https://www.theguardian.com/football/bundesligafootball")
+					  ("Ligue 1" . "https://www.theguardian.com/football/ligue1football")
+					  ("Champions League" . "https://www.theguardian.com/football/championsleague")
+					  ("FA Cup" . "https://www.theguardian.com/football/fa-cup")
+					  ("Carabao Cup" . "https://www.theguardian.com/football/carabao-cup")
+					  ("Championship" . "https://www.theguardian.com/football/championship")
+					  ("Europa League" . "https://www.theguardian.com/football/uefa-europa-league")
+					  ("Conference League" . "https://www.theguardian.com/football/europa-conference-league")
+					  ("MLS" . "https://www.theguardian.com/football/mls")
+					  ("Women's Super League" . "https://www.theguardian.com/football/womens-super-league"))
+  "Alist of league and urls."
+  :type '(alist :value-type (group integer))
+  :group 'soccer)
 
 (provide 'soccer-leagues)
 
