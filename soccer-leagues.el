@@ -66,12 +66,15 @@
 
 (defun soccer-leagues--get-competition-names-and-urls ()
   "Get the competition names and the corresponding urls."
-  (let* ((url "https://www.theguardian.com/football/competitions"))
+  (let* ((base-url "https://www.theguardian.com") (url (concat base-url "/football/competitions")))
     (with-current-buffer (url-retrieve-synchronously url)
       (let* ((dom (libxml-parse-html-region (point-min) (point-max)))
-	     (data-dom (dom-by-class dom "fc-item fc-item--list-compact"))
-	     (url-list (cl-loop for d in data-dom
-				collect (cons (car (dom-strings d)) (dom-attr (dom-by-tag d 'a) 'href)))))
+             (sections (dom-elements (dom-by-id dom "maincontent") 'data-container-name "^nav/list$"))
+             (url-list (cl-loop for section in sections
+                                append (cl-loop for item in (dom-by-tag section 'li)
+                                                for name = (car (dom-strings item))
+                                                for url = (concat base-url (dom-attr (dom-by-tag item 'a) 'href))
+                                                collect (cons name url)))))
         url-list))))
 
 (defgroup soccer-leagues nil
