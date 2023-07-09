@@ -38,12 +38,6 @@
   "Get the base url of the website to get data from."
   "https://www.theguardian.com/football/")
 
-(defun soccer-leagues--get-base-league-url (league)
-  "Get the base url for a LEAGUE."
-  (if (member league (mapcar #'car soccer-leagues--leagues-alist))
-      (cdr (assoc league soccer-leagues--leagues-alist))
-    (user-error "Unknown league %s" league)))
-
 (defun soccer-leagues--get-club-names-and-urls (league)
   "Get the team names and the corresponding urls for a LEAGUE."
   (let* ((url (concat (soccer-leagues--get-base-league-url league)  "/table")))
@@ -97,6 +91,12 @@
   "Alist of league and urls."
   :type '(alist :value-type (group integer))
   :group 'soccer)
+
+(defun soccer-leagues--get-base-league-url (league)
+  "Get the base url for a LEAGUE."
+  (if (member league (mapcar #'car soccer-leagues-leagues-alist))
+      (cdr (assoc league soccer-leagues-leagues-alist))
+    (user-error "Unknown league %s" league)))
 
 (provide 'soccer-leagues)
 
