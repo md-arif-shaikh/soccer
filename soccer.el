@@ -243,7 +243,7 @@
     (setq time-till-kickoff-string (format "⟶ %s %s %s"
 					   (if (> days-remain 0) (format "%2s days" days-remain) "")
 					   (if (> hours-remain 0) (format "%2s hours" hours-remain) "")
-					   (cond ((>= mins-remain 0) (format "%2s mins untill kickoff" mins-remain))
+					   (cond ((>= mins-remain 0) (format "%2s mins until kickoff" mins-remain))
 						 ((and (< mins-remain 0) (> mins-remain (- 95))) "match is live now.")
 						 (t "match has finished"))))
     (format "%s %40s - %-40s %s" (propertize local-time-string 'face 'soccer-face-local-time) (propertize home 'face 'soccer-face-fixtures) (propertize away 'face 'soccer-face-fixtures) (propertize time-till-kickoff-string 'face 'soccer-face-time-to-kickoff))))
