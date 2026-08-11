@@ -52,7 +52,8 @@ system time zone, for instance to follow a league from abroad
   #+BEGIN_SRC emacs-lisp
     (setq soccer-timezone "Europe/London")
   #+END_SRC
-~soccer-time-local-time-utc-offset~ is deprecated and is no longer consulted.
+~soccer-time-local-time-utc-offset~ has been removed; you can drop it from your
+configuration.
 ** Keybindings
 A single binding for the transient menu is usually enough, since every other
 command is reachable from it

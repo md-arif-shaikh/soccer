@@ -55,7 +55,6 @@
 
 (require 'soccer-source)
 (require 'soccer-leagues)
-(require 'soccer-time)
 (require 'org)
 (require 'dom)
 (require 'json)
@@ -162,10 +161,6 @@ instants, so Emacs can place them in your local time by itself."
 (defun soccer--get-league-names ()
   "Extract the list of known competition names."
   (mapcar #'car (soccer-leagues--leagues)))
-
-;; The original name of this function; kept because it leaked into a few
-;; interactive specs over the years.
-(defalias 'soccer--league-names #'soccer--get-league-names)
 
 (defun soccer--get-league-url (league)
   "Get url of a LEAGUE."
@@ -891,12 +886,6 @@ Only recent matches are listed; use `soccer-results-last' to check."))))
   (soccer--export-org league "results" club))
 
 ;;;; Schedules in the org agenda
-
-(defcustom soccer-schedule-league-team-alist '()
-  "An alist where each element is (league team).
-This is used to add the schedules for the teams to agenda."
-  :type '(alist :key-type string :value-type string)
-  :group 'soccer)
 
 (defcustom soccer-schedule-dir (expand-file-name "~/Dropbox/org/")
   "Directory to store soccer schedules.

@@ -129,12 +129,6 @@ results are later filtered by, they have to be taken from the same place."
         (puthash league names soccer-leagues--clubs-cache)
         names))))
 
-(defun soccer-leagues--get-club-names-and-urls (league)
-  "Get the club names for a LEAGUE as an alist.
-Kept for backward compatibility; the source site no longer exposes a
-per-club url in its match lists, so the cdr of each entry is nil."
-  (mapcar #'list (soccer-leagues--get-club-names league)))
-
 (defun soccer-leagues-refresh ()
   "Discard the cached competition and club lists."
   (interactive)
