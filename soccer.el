@@ -1010,10 +1010,16 @@ This will remove the org file for the given league."
 ;;;; Transient menus
 
 (defun soccer--transient-description ()
-  "Describe the buffer the transient was invoked from."
-  (if soccer--league
-      (format "%s%s" soccer--league (if soccer--club (concat " · " soccer--club) ""))
-    "soccer"))
+  "Describe the buffer the transient was invoked from.
+Transient formats a prefix in a temporary buffer, so the buffer local
+state has to be read back out of `transient--original-buffer'."
+  (with-current-buffer (or (and (buffer-live-p transient--original-buffer)
+                                transient--original-buffer)
+                           (current-buffer))
+    (if soccer--league
+        (format "%s%s" soccer--league
+                (if soccer--club (concat " · " soccer--club) ""))
+      "soccer")))
 
 ;;;###autoload (autoload 'soccer "soccer" nil t)
 (transient-define-prefix soccer ()
@@ -1045,7 +1051,9 @@ This will remove the org file for the given league."
     ("g" "Clear cache" soccer-leagues-refresh)]])
 
 (transient-define-prefix soccer-buffer-menu ()
-  "Act on the current soccer buffer."
+  "Act on the current soccer buffer.
+Only meaningful inside a `soccer-mode' buffer, since every entry acts on
+the competition that buffer is showing."
   [:description soccer--transient-description
    ["View"
     ("f" "Fixtures" soccer-show-fixtures)
@@ -1062,7 +1070,11 @@ This will remove the org file for the given league."
     ("w" "Open in browser" soccer-browse-match)]
    ["Buffer"
     ("g" "Refresh" soccer-refresh)
-    ("q" "Quit" quit-window)]])
+    ("q" "Quit" quit-window)]]
+  (interactive nil soccer-mode)
+  (unless (derived-mode-p 'soccer-mode)
+    (user-error "Not a soccer buffer; use `M-x soccer' to pick a competition"))
+  (transient-setup 'soccer-buffer-menu))
 
 (provide 'soccer)
 ;;; soccer.el ends here
