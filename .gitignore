@@ -1,0 +1,4 @@
+*.elc
+*.el~
+*~
+.DS_Store
