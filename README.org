@@ -10,6 +10,8 @@
   - [[#set-local-time][Set local time]]
   - [[#keybindings][Keybindings]]
   - [[#full-working-configuration][Full working configuration]]
+- [[#the-transient-menu][The transient menu]]
+- [[#inside-a-soccer-buffer][Inside a soccer buffer]]
 - [[#useful-interactive-functions][Useful interactive functions]]
 - [[#screenshots][Screenshots]]
   - [[#soccer-fixtures-next-5][soccer-fixtures-next-5]]
@@ -28,47 +30,82 @@
   - Bundesliga (Germany)
   - Serie A (Italy)
   - Championship (England)
-All data are fetched from ~the guardian~ website.
+All data are fetched from ~the guardian~ website. The list of competitions is
+discovered at run time, so every competition the site covers — including the
+cups, the women's competitions and the Scottish leagues — is available, not just
+the ones listed above.
 * Installation and configuration
 ** Install
+Requires Emacs 29.1 or later.
+
 It's available in [[https://melpa.org/#/][Melpa]]. Look [[https://melpa.org/#/getting-started][here]] for instruction. One can also install it using ~straight~ and ~use-package~
   #+BEGIN_SRC emacs-lisp
     (use-package soccer
       :straight (soccer :type git :host github :repo "md-arif-shaikh/soccer"))
   #+END_SRC
 ** Set local time
-To get the time and match day converted to your local time configure the following
+Nothing to configure. Kick off times are published as absolute instants and are
+shown in your own time zone automatically.
+
+Set ~soccer-timezone~ only if you want times shown somewhere *other* than your
+system time zone, for instance to follow a league from abroad
   #+BEGIN_SRC emacs-lisp
-    (setq soccer-time-local-time-utc-offset "+0530")
+    (setq soccer-timezone "Europe/London")
   #+END_SRC
+~soccer-time-local-time-utc-offset~ is deprecated and is no longer consulted.
 ** Keybindings
-Additionally you may want to make some keybindings to call the interactive functions conveniently. For example, using ~use-package~ this can be done like below,
+A single binding for the transient menu is usually enough, since every other
+command is reachable from it
   #+BEGIN_SRC emacs-lisp
     (use-package soccer
       :straight t
-      :config
-      (setq soccer-time-local-time-utc-offset "+0530")
-      :bind (("C-c s f" . soccer-fixtures-next)
-	     ("C-c s r" . soccer-results-last)
-	     ("C-c s t" . soccer-table)))
+      :bind ("C-c s" . soccer))
   #+END_SRC
-  This will fetch and install the package from ~Melpa~, set your local ~utc-offset~ and set the above keybindings.
 ** Full working configuration
 #+BEGIN_SRC emacs-lisp
     (use-package soccer
       :straight (soccer :type git :host github :repo "md-arif-shaikh/soccer")
-      :init
       :config
-      (setq soccer-time-local-time-utc-offset "+0530")
-      :bind (("C-c s f" . soccer-fixtures-next)
-	     ("C-c s r" . soccer-results-last)
-	     ("C-c s t" . soccer-table)))
+      ;; Optional: show times somewhere other than your system time zone.
+      ;; (setq soccer-timezone "Europe/London")
+      :bind (("C-c s" . soccer)
+             ("C-c s f" . soccer-fixtures-next)
+             ("C-c s r" . soccer-results-last)
+             ("C-c s t" . soccer-table)))
   #+END_SRC
+* The transient menu
+~M-x soccer~ opens a transient menu from which every view and command is
+reachable: fixtures, results and tables, the per club commands, the org export
+and the org-agenda scheduling.
+* Inside a soccer buffer
+Fixtures, results and tables open in a ~soccer-mode~ buffer. Press ~?~ there for
+a transient of everything you can do to it. The plain keys are
+
+| Key   | Action                                             |
+| ~?~   | Transient menu                                     |
+| ~g~   | Refresh from the source                            |
+| ~f~   | Fixtures                                           |
+| ~r~   | Results                                            |
+| ~t~   | League table                                       |
+| ~l~   | Switch competition                                 |
+| ~c~   | Filter by club                                     |
+| ~a~   | Drop the club filter                               |
+| ~F~   | Fixtures of the club at point                      |
+| ~R~   | Results of the club at point                       |
+| ~s~   | Scorecard of the match at point, with goalscorers  |
+| ~w~   | Open the match at point in a browser               |
+| ~RET~ | Do the obvious thing with the line at point        |
+| ~q~   | Quit                                               |
+
+So from a league table, moving to a row and pressing ~F~ shows that club's
+fixtures; from a results list, ~s~ shows who scored.
 * Useful interactive functions
   Call these using ~M-x Function~ where ~Function~ is any of the following functions
 
 |--------------------------------------+------------------------------------------------------|
 | Functions                            | Actions                                              |
+| ~soccer~                               | Transient menu with everything                       |
+| ~soccer-scorecard~                     | Scorecard of a match, with goalscorers               |
 | ~soccer-fixtures-next~                 | Fixture for the Next match                           |
 | ~soccer-fixtures-next-5~               | Fixtures of the Next 5 matches                       |
 | ~soccer-fixtures-full-in-org~          | Full fixtures saved in org file                      |

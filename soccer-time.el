@@ -4,7 +4,7 @@
 
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: games, calendar
 ;; Version: 1.0.0
 
@@ -33,7 +33,12 @@
 
 (require 'org)
 (defcustom soccer-time-local-time-utc-offset "+0530"
-  "UTC offfset for local time zone."
+  "UTC offset for local time zone.
+
+Deprecated and no longer consulted.  The source now publishes absolute
+UTC instants, so kick off times are converted to your own time zone
+without having to be told what it is.  Set `soccer-timezone' if you want
+times shown somewhere other than your system time zone."
   :type 'string
   :group 'soccer)
 
