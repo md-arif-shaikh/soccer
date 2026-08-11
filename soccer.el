@@ -277,7 +277,7 @@ shape rather than by class name."
             :url url))))
 
 (defun soccer--parse-date-heading (string)
-  "Parse a date heading such as \"Monday, 10 August 2026\" into a time."
+  "Parse STRING, a date heading such as \"Monday, 10 August 2026\", into a time."
   (when string
     (ignore-errors
       (pcase-let ((`(,_ ,_ ,_ ,day ,month ,year . ,_)
@@ -442,7 +442,7 @@ without breaking this."
                (date (and time (soccer--format-time time "%A, %e %B %Y")))
                (competition (plist-get match :competition)))
           (unless (equal date last-date)
-            (unless (null last-date) (insert "\n"))
+            (when last-date (insert "\n"))
             (insert (propertize (format "  %s\n" (or date "Date unknown"))
                                 'face 'soccer-face-date))
             (setq last-date date last-competition nil))
@@ -497,7 +497,7 @@ without breaking this."
         (insert "\n")))))
 
 (defun soccer--header-line ()
-  "Build the header line describing what the buffer shows."
+  "Build the header line that describes the current buffer."
   (concat
    " "
    (propertize (or soccer--league "soccer") 'face 'bold)
@@ -928,7 +928,7 @@ Remember to add this in the list of agenda files if it is not already."
                                    (plist-get match :home)
                                    (plist-get match :away))
                            (format "SCHEDULED: <%s>"
-                                   (soccer--format-time time "%F %a %R"))))))
+                                   (soccer--format-time time "%F %a %H:%M"))))))
 
 ;;;###autoload
 (defun soccer-schedule (league team num-weeks)

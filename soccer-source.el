@@ -4,7 +4,6 @@
 
 ;; Author: Md Arif Shaikh <arifshaikh.astro@gmail.com>
 ;; Homepage: https://github.com/md-arif-shaikh/soccer
-;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: games
 ;; Version: 2.0.0
 
