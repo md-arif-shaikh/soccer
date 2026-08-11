@@ -549,9 +549,17 @@ CLUB filters the matches and LIMIT caps how many are shown."
 
 ;;;; Major mode
 
+(defun soccer--context-league ()
+  "Return the competition for the current buffer, prompting if it has none.
+The commands below are meant to be used from a `soccer-mode' buffer,
+where the competition is already known, but they remain callable from
+anywhere; falling back to a prompt keeps that from failing on the nil
+buffer local value."
+  (or soccer--league (soccer--read-league)))
+
 (defun soccer-refresh ()
   "Refetch and redraw the current view."
-  (interactive)
+  (interactive nil soccer-mode)
   (unless soccer--view (user-error "Not in a soccer buffer"))
   (soccer-source-clear-cache)
   (soccer--render)
@@ -572,7 +580,7 @@ CLUB filters the matches and LIMIT caps how many are shown."
 
 (defun soccer-browse-match ()
   "Open the match at point on the source site."
-  (interactive)
+  (interactive nil soccer-mode)
   (let ((match (soccer-match-at-point)))
     (unless (and match (plist-get match :url))
       (user-error "No match at point"))
@@ -580,47 +588,50 @@ CLUB filters the matches and LIMIT caps how many are shown."
 
 (defun soccer-show-fixtures-at-point ()
   "Show the fixtures of the club named at point."
-  (interactive)
+  (interactive nil soccer-mode)
   (let ((team (soccer-team-at-point)))
     (unless team (user-error "No club at point"))
-    (soccer--show soccer--league 'fixtures team)))
+    (soccer--show (soccer--context-league) 'fixtures team)))
 
 (defun soccer-show-results-at-point ()
   "Show the results of the club named at point."
-  (interactive)
+  (interactive nil soccer-mode)
   (let ((team (soccer-team-at-point)))
     (unless team (user-error "No club at point"))
-    (soccer--show soccer--league 'results team)))
+    (soccer--show (soccer--context-league) 'results team)))
 
 (defun soccer-show-fixtures ()
   "Show the fixtures of the competition in this buffer."
-  (interactive)
-  (soccer--show soccer--league 'fixtures soccer--club))
+  (interactive nil soccer-mode)
+  (soccer--show (soccer--context-league) 'fixtures soccer--club))
 
 (defun soccer-show-results ()
   "Show the results of the competition in this buffer."
-  (interactive)
-  (soccer--show soccer--league 'results soccer--club))
+  (interactive nil soccer-mode)
+  (soccer--show (soccer--context-league) 'results soccer--club))
 
 (defun soccer-show-table ()
   "Show the league table of the competition in this buffer."
-  (interactive)
-  (soccer--show soccer--league 'table))
+  (interactive nil soccer-mode)
+  (soccer--show (soccer--context-league) 'table))
 
 (defun soccer-clear-club-filter ()
   "Drop the club filter and show the whole competition."
-  (interactive)
-  (soccer--show soccer--league (or soccer--view 'fixtures) nil))
+  (interactive nil soccer-mode)
+  (soccer--show (soccer--context-league) (or soccer--view 'fixtures) nil))
 
 (defun soccer-switch-league (league)
   "Show the current view for another LEAGUE."
-  (interactive (list (soccer--read-league)))
+  (interactive (list (soccer--read-league)) soccer-mode)
   (soccer--show league (or soccer--view 'fixtures) nil))
 
-(defun soccer-filter-by-club (club)
-  "Filter the current view by CLUB."
-  (interactive (list (soccer--read-club soccer--league)))
-  (soccer--show soccer--league (or soccer--view 'fixtures) club))
+(defun soccer-filter-by-club (league club)
+  "Filter the view of LEAGUE by CLUB."
+  (interactive
+   (let ((league (soccer--context-league)))
+     (list league (soccer--read-club league)))
+   soccer-mode)
+  (soccer--show league (or soccer--view 'fixtures) club))
 
 (defvar soccer-mode-map
   (let ((map (make-sparse-keymap)))
@@ -656,7 +667,7 @@ CLUB filters the matches and LIMIT caps how many are shown."
   "Do the obvious thing with the line at point.
 On a finished match that means its scorecard, on a table row the club's
 fixtures."
-  (interactive)
+  (interactive nil soccer-mode)
   (let ((match (soccer-match-at-point)))
     (cond
      ((and match (plist-get match :home-score)) (soccer-scorecard-at-point))
@@ -717,7 +728,7 @@ steadier than reading it back out of the rendered markup."
 
 (defun soccer-scorecard-at-point ()
   "Show the scorecard of the match at point."
-  (interactive)
+  (interactive nil soccer-mode)
   (let* ((match (soccer-match-at-point))
          (url (and match (plist-get match :url))))
     (unless url (user-error "No match at point"))
