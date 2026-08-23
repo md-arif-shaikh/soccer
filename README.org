@@ -10,6 +10,7 @@
   - [[#set-local-time][Set local time]]
   - [[#keybindings][Keybindings]]
   - [[#full-working-configuration][Full working configuration]]
+- [[#the-dashboard][The dashboard]]
 - [[#the-transient-menu][The transient menu]]
 - [[#inside-a-soccer-buffer][Inside a soccer buffer]]
 - [[#useful-interactive-functions][Useful interactive functions]]
@@ -43,6 +44,15 @@ It's available in [[https://melpa.org/#/][Melpa]]. Look [[https://melpa.org/#/ge
     (use-package soccer
       :straight (soccer :type git :host github :repo "md-arif-shaikh/soccer"))
   #+END_SRC
+** Set a favourite league
+~M-x soccer-dashboard~ opens on ~soccer-favourite-league~. The first call asks
+for a competition and offers to remember it, so there is nothing to configure by
+hand, but it can also be set outright
+  #+BEGIN_SRC emacs-lisp
+    (setq soccer-favourite-league "Premier League"
+          ;; Optional: follow one club rather than the whole competition.
+          soccer-favourite-club "Liverpool")
+  #+END_SRC
 ** Set local time
 Nothing to configure. Kick off times are published as absolute instants and are
 shown in your own time zone automatically.
@@ -74,6 +84,30 @@ command is reachable from it
              ("C-c s r" . soccer-results-last)
              ("C-c s t" . soccer-table)))
   #+END_SRC
+* The dashboard
+~M-x soccer-dashboard~ shows one buffer with the recent results, the upcoming
+fixtures and the league table of your favourite competition, one section after
+the other. With a prefix argument (~C-u M-x soccer-dashboard~) it asks which
+competition to show instead.
+
+Setting ~soccer-favourite-club~, or pressing ~C~ in the dashboard, narrows the
+results and the fixtures to that club and points its row out in the table.
+
+Changing competition from inside the dashboard
+| Key | Action                                                       |
+| ~l~ | Switch competition for this buffer only                      |
+| ~L~ | Switch competition and remember it as the favourite          |
+| ~c~ | Filter by a club, for this buffer only                       |
+| ~C~ | Filter by a club and remember it as the favourite            |
+| ~a~ | Drop the club filter                                         |
+| ~?~ | The full transient menu, with all of the above               |
+
+How much of each section is shown is configurable
+  #+BEGIN_SRC emacs-lisp
+    (setq soccer-dashboard-results 5      ; recent results
+          soccer-dashboard-fixtures 5     ; upcoming fixtures
+          soccer-dashboard-table-rows nil); nil shows the whole table
+  #+END_SRC
 * The transient menu
 ~M-x soccer~ opens a transient menu from which every view and command is
 reachable: fixtures, results and tables, the per club commands, the org export
@@ -88,8 +122,11 @@ a transient of everything you can do to it. The plain keys are
 | ~f~   | Fixtures                                           |
 | ~r~   | Results                                            |
 | ~t~   | League table                                       |
+| ~d~   | Dashboard                                          |
 | ~l~   | Switch competition                                 |
+| ~L~   | Switch competition and remember it                 |
 | ~c~   | Filter by club                                     |
+| ~C~   | Filter by club and remember it                     |
 | ~a~   | Drop the club filter                               |
 | ~F~   | Fixtures of the club at point                      |
 | ~R~   | Results of the club at point                       |
@@ -106,6 +143,9 @@ fixtures; from a results list, ~s~ shows who scored.
 |--------------------------------------+------------------------------------------------------|
 | Functions                            | Actions                                              |
 | ~soccer~                               | Transient menu with everything                       |
+| ~soccer-dashboard~                     | Results, fixtures and table of the favourite league  |
+| ~soccer-set-favourite-league~          | Pick the competition the dashboard opens on          |
+| ~soccer-set-favourite-club~            | Pick the club the dashboard follows                  |
 | ~soccer-scorecard~                     | Scorecard of a match, with goalscorers               |
 | ~soccer-fixtures-next~                 | Fixture for the Next match                           |
 | ~soccer-fixtures-next-5~               | Fixtures of the Next 5 matches                       |
