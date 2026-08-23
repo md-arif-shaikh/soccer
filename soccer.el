@@ -26,8 +26,12 @@
 ;; This package brings soccer (football) fixtures, results and league
 ;; tables into Emacs, for every competition the source site covers.
 ;;
-;; The entry point is `soccer', a transient menu from which every view is
-;; reachable.  Views open in a `soccer-mode' buffer which has its own
+;; `soccer-dashboard' is the quickest way in: it shows the recent results,
+;; the upcoming fixtures and the table of `soccer-favourite-league' in one
+;; buffer, and "l" there switches to any other competition.
+;;
+;; The other entry point is `soccer', a transient menu from which every view
+;; is reachable.  Views open in a `soccer-mode' buffer which has its own
 ;; transient bound to "?", so a league table is one keystroke away from the
 ;; fixtures of the club under point.
 ;;
@@ -38,6 +42,9 @@
 ;;
 ;; Function                     Action
 ;; soccer                       Transient menu with everything
+;; soccer-dashboard             Results, fixtures and table at a glance
+;; soccer-set-favourite-league  Competition the dashboard opens on
+;; soccer-set-favourite-club    Club the dashboard follows
 ;; soccer-fixtures-next         Fixture for the next match
 ;; soccer-fixtures-next-5       Fixtures of the next 5 matches
 ;; soccer-fixtures-full-in-org  Full fixtures saved in an org file
@@ -83,6 +90,34 @@ instants, so Emacs can place them in your local time by itself."
 (defcustom soccer-team-column-width 22
   "Width in characters reserved for each club name in match listings."
   :type 'integer
+  :group 'soccer)
+
+(defcustom soccer-favourite-league nil
+  "Competition the dashboard opens on.
+When nil, `soccer-dashboard' asks for one and offers to remember it."
+  :type '(choice (const :tag "Ask every time" nil) string)
+  :group 'soccer)
+
+(defcustom soccer-favourite-club nil
+  "Club the dashboard highlights and filters the matches by.
+When nil the dashboard shows the whole competition."
+  :type '(choice (const :tag "Whole competition" nil) string)
+  :group 'soccer)
+
+(defcustom soccer-dashboard-results 5
+  "How many recent results the dashboard shows."
+  :type 'integer
+  :group 'soccer)
+
+(defcustom soccer-dashboard-fixtures 5
+  "How many upcoming fixtures the dashboard shows."
+  :type 'integer
+  :group 'soccer)
+
+(defcustom soccer-dashboard-table-rows nil
+  "How many rows of the league table the dashboard shows.
+When nil the whole table is shown."
+  :type '(choice (const :tag "The whole table" nil) integer)
   :group 'soccer)
 
 ;;;; Faces
@@ -154,6 +189,16 @@ instants, so Emacs can place them in your local time by itself."
 (defface soccer-face-competition
   '((t :inherit font-lock-type-face))
   "Face for a competition name."
+  :group 'soccer)
+
+(defface soccer-face-section
+  '((t :inherit font-lock-function-name-face :weight bold :underline t))
+  "Face for a section heading of the dashboard."
+  :group 'soccer)
+
+(defface soccer-face-favourite
+  '((t :inherit highlight))
+  "Face for the row of `soccer-favourite-club' in the league table."
   :group 'soccer)
 
 ;;;; Utilities
@@ -456,8 +501,20 @@ without breaking this."
             (setq last-competition competition))
           (soccer--insert-match match))))))
 
-(defun soccer--insert-table (rows)
-  "Insert league table ROWS."
+(defun soccer--same-club-p (a b)
+  "Return non-nil when club names A and B plausibly name the same club.
+The league table spells clubs out in full while the match lists
+abbreviate them, so the comparison is loose: either name being a prefix
+of the other is enough.  Abbreviations that drop letters from the middle
+\(\"Man Utd\") are beyond it and simply do not match."
+  (and a b
+       (let ((a (downcase (string-trim a)))
+             (b (downcase (string-trim b))))
+         (or (string-prefix-p a b) (string-prefix-p b a)))))
+
+(defun soccer--insert-table (rows &optional highlight)
+  "Insert league table ROWS.
+The row of the club HIGHLIGHT, if given, is drawn standing out."
   (insert (propertize
            (format "  %-3s %-24s %4s %4s %4s %4s %5s %5s %5s %5s   %s\n"
                    "#" "Team" "P" "W" "D" "L" "GF" "GA" "GD" "Pts" "Form")
@@ -465,6 +522,7 @@ without breaking this."
   (let ((total (length rows)))
     (dolist (row rows)
       (let* ((rank (plist-get row :rank))
+             (mine (soccer--same-club-p highlight (plist-get row :team)))
              (points-face (cond ((<= rank 4) 'soccer-face-win)
                                 ((> rank (- total 3)) 'soccer-face-loss)
                                 (t 'default)))
@@ -492,9 +550,44 @@ without breaking this."
                    (plist-get row :goals-against) (plist-get row :goal-difference))
            (propertize (format " %5d" (plist-get row :points)) 'face points-face)
            "   " form)))
+        (when mine
+          (font-lock-prepend-text-property (line-beginning-position) (point)
+                                           'face 'soccer-face-favourite))
         (put-text-property (line-beginning-position) (point) 'soccer-team
                            (plist-get row :team))
         (insert "\n")))))
+
+(defun soccer--insert-section (title)
+  "Insert TITLE as a dashboard section heading."
+  (insert (propertize (format "  %s" title) 'face 'soccer-face-section) "\n\n"))
+
+(defun soccer--insert-dashboard ()
+  "Draw the overview of `soccer--league' into the current buffer.
+Recent results, upcoming fixtures and the league table, one after the
+other, filtered by `soccer--club' when the buffer carries one.  A
+competition without a published table, a cup for instance, simply says
+so instead of leaving the dashboard unrendered."
+  (let ((club soccer--club))
+    (soccer--insert-section "Recent results")
+    (soccer--insert-matches
+     (seq-take (soccer--matches soccer--league "results" club)
+               soccer-dashboard-results))
+    (insert "\n")
+    (soccer--insert-section "Upcoming fixtures")
+    (soccer--insert-matches
+     (seq-take (soccer--matches soccer--league "fixtures" club)
+               soccer-dashboard-fixtures))
+    (insert "\n")
+    (soccer--insert-section "Table")
+    (condition-case err
+        (let ((rows (soccer--table-rows soccer--league)))
+          (soccer--insert-table (if soccer-dashboard-table-rows
+                                    (seq-take rows soccer-dashboard-table-rows)
+                                  rows)
+                                club))
+      (error
+       (insert (propertize (format "  %s\n" (error-message-string err))
+                           'face 'soccer-face-draw))))))
 
 (defun soccer--header-line ()
   "Build the header line that describes the current buffer."
@@ -515,7 +608,9 @@ without breaking this."
         (line (line-number-at-pos)))
     (erase-buffer)
     (pcase soccer--view
-      ('table (soccer--insert-table (soccer--table-rows soccer--league)))
+      ('dashboard (soccer--insert-dashboard))
+      ('table (soccer--insert-table (soccer--table-rows soccer--league)
+                                    soccer--club))
       (_ (let ((matches (soccer--matches soccer--league
                                          (symbol-name soccer--view)
                                          soccer--club)))
@@ -633,6 +728,59 @@ buffer local value."
    soccer-mode)
   (soccer--show league (or soccer--view 'fixtures) club))
 
+(defun soccer-show-dashboard ()
+  "Show the dashboard of the competition in this buffer."
+  (interactive nil soccer-mode)
+  (soccer--show (soccer--context-league) 'dashboard soccer--club))
+
+;;;###autoload
+(defun soccer-set-favourite-league (league)
+  "Remember LEAGUE as `soccer-favourite-league' and show its dashboard.
+The value is saved for future sessions, so this is the one command
+needed to settle on a competition to open on."
+  (interactive (list (soccer--read-league)))
+  (customize-save-variable 'soccer-favourite-league league)
+  ;; A club of the old league would filter everything away in the new one.
+  (unless (member soccer-favourite-club
+                  (ignore-errors (soccer-leagues--get-club-names league)))
+    (customize-save-variable 'soccer-favourite-club nil))
+  (soccer--show league 'dashboard soccer-favourite-club))
+
+;;;###autoload
+(defun soccer-set-favourite-club (league club)
+  "Remember CLUB of LEAGUE as `soccer-favourite-club' and show the dashboard.
+The dashboard then lists that club's results and fixtures and points it
+out in the table.  Answering the prompt with an empty club drops the
+filter and goes back to the whole competition."
+  (interactive
+   (let ((league (or soccer-favourite-league (soccer--read-league))))
+     (list league (completing-read "Club (empty for all): "
+                                   (soccer-leagues--get-club-names league))))
+   soccer-mode)
+  (let ((club (and club (not (string-empty-p club)) club)))
+    (customize-save-variable 'soccer-favourite-league league)
+    (customize-save-variable 'soccer-favourite-club club)
+    (soccer--show league 'dashboard club)))
+
+;;;###autoload
+(defun soccer-dashboard (&optional league)
+  "Show recent results, upcoming fixtures and the table of LEAGUE at a glance.
+LEAGUE defaults to `soccer-favourite-league'; with a prefix argument, or
+when no favourite has been set yet, it is asked for.  From the dashboard
+`l' switches competition for this buffer alone and `L' makes the new one
+the favourite."
+  (interactive
+   (list (if (or current-prefix-arg (null soccer-favourite-league))
+             (soccer--read-league)
+           soccer-favourite-league)))
+  (let ((league (or league soccer-favourite-league (soccer--read-league))))
+    (when (and (null soccer-favourite-league)
+               (y-or-n-p (format "Open on %s from now on? " league)))
+      (customize-save-variable 'soccer-favourite-league league))
+    (soccer--show league 'dashboard
+                  (and (equal league soccer-favourite-league)
+                       soccer-favourite-club))))
+
 (defvar soccer-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map special-mode-map)
@@ -641,7 +789,9 @@ buffer local value."
     (define-key map (kbd "f") #'soccer-show-fixtures)
     (define-key map (kbd "r") #'soccer-show-results)
     (define-key map (kbd "t") #'soccer-show-table)
+    (define-key map (kbd "d") #'soccer-show-dashboard)
     (define-key map (kbd "l") #'soccer-switch-league)
+    (define-key map (kbd "L") #'soccer-set-favourite-league)
     (define-key map (kbd "c") #'soccer-filter-by-club)
     (define-key map (kbd "a") #'soccer-clear-club-filter)
     (define-key map (kbd "F") #'soccer-show-fixtures-at-point)
@@ -1027,6 +1177,7 @@ state has to be read back out of `transient--original-buffer'."
   [:description
    (lambda () (propertize "soccer" 'face 'transient-heading))
    ["Browse"
+    ("d" "Dashboard" soccer-dashboard)
     ("f" "Fixtures" soccer-fixtures-all-clubs)
     ("r" "Results" soccer-results-all-clubs)
     ("t" "Table" soccer-table)]
@@ -1047,6 +1198,9 @@ state has to be read back out of `transient--original-buffer'."
     ("al" "Schedule a league" soccer-schedule-league)
     ("ap" "Drop past fixtures" soccer-schedule-remove-past-fixtures)
     ("ax" "Drop a league" soccer-schedule-remove-league)]
+   ["Favourite"
+    ("Fl" "Set favourite league" soccer-set-favourite-league)
+    ("Fc" "Set favourite club" soccer-set-favourite-club)]
    ["Cache"
     ("g" "Clear cache" soccer-leagues-refresh)]])
 
@@ -1056,12 +1210,15 @@ Only meaningful inside a `soccer-mode' buffer, since every entry acts on
 the competition that buffer is showing."
   [:description soccer--transient-description
    ["View"
+    ("d" "Dashboard" soccer-show-dashboard)
     ("f" "Fixtures" soccer-show-fixtures)
     ("r" "Results" soccer-show-results)
     ("t" "Table" soccer-show-table)]
-   ["Filter"
+   ["League"
     ("l" "Other league" soccer-switch-league)
+    ("L" "Set favourite league" soccer-set-favourite-league)
     ("c" "Filter by club" soccer-filter-by-club)
+    ("C" "Set favourite club" soccer-set-favourite-club)
     ("a" "All clubs" soccer-clear-club-filter)]
    ["At point"
     ("F" "Club fixtures" soccer-show-fixtures-at-point)
