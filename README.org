@@ -3,6 +3,8 @@
 #+EMAIL: arifshaikh.astro@gmail.com
 
 #+html: <div> <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/md-arif-shaikh/soccer"> <img alt="GitHub" src="https://img.shields.io/github/license/md-arif-shaikh/soccer"> <a href="https://melpa.org/#/soccer"><img alt="MELPA" src="https://melpa.org/packages/soccer-badge.svg"/></a>  <a href="https://stable.melpa.org/#/soccer"><img alt="MELPA Stable" src="https://stable.melpa.org/packages/soccer-badge.svg"/></a></div>
+#+html: <div> <img src="./screenshots/soccer-dashboard.png"> </div>
+
 * Table of contents :TOC:
 - [[#about-the-package][About the package]]
 - [[#installation-and-configuration][Installation and configuration]]
